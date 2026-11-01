@@ -298,7 +298,14 @@ const UI = {
       });
     }
 
-    // --- Screen 5: Manual Movement (Single-Mast Robotic Arm & Direct Cursor Dragging) ---
+    // --- Screen 5: Manual Movement (Dual Masts Side by Side - Interactive & Draggable) ---
+    // State for Arm 1 and Arm 2
+    this.gantry1X = 0.0;
+    this.gantry1Y = 0.0;
+    this.gantry2X = 0.0;
+    this.gantry2Y = 0.0;
+    this.activeArm = "arm1"; // "arm1", "arm2", or "both"
+
     const stepChips = document.querySelectorAll(".gantry-panel .btn-speed");
     stepChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -308,88 +315,117 @@ const UI = {
       });
     });
 
+    // Arm Selector Chips
+    const armSelectBtns = document.querySelectorAll(".btn-arm-select");
+    armSelectBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        armSelectBtns.forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        this.activeArm = btn.getAttribute("data-arm") || "arm1";
+      });
+    });
+
     const updateGantryDisplay = () => {
       const readout = document.getElementById("gantry-coords-readout");
-      const posSub = document.getElementById("gantry-hand-pos-sub");
-      const dimX = document.getElementById("gantry-dim-x-val");
-      const dimY = document.getElementById("gantry-dim-y-val");
 
-      const signX = this.gantryX > 0 ? "+" : "";
-      const signY = this.gantryY > 0 ? "+" : "";
-      const coordStr = `X: ${signX}${this.gantryX.toFixed(1)} mm | Y: ${signY}${this.gantryY.toFixed(1)} mm`;
-      if (readout) readout.innerText = coordStr;
-      if (posSub) posSub.innerText = `(${signX}${this.gantryX.toFixed(0)}, ${signY}${this.gantryY.toFixed(0)})`;
-      if (dimX) dimX.innerText = `← x: ${signX}${this.gantryX.toFixed(0)} mm →`;
-      if (dimY) dimY.innerText = `y: ${signY}${this.gantryY.toFixed(0)} mm`;
+      // Arm 1 Elements
+      const beam1 = document.getElementById("gantry1-crossbeam");
+      const toolhead1 = document.getElementById("gantry1-toolhead");
+      const coords1 = document.getElementById("gantry1-coords-sub");
+      const dimX1 = document.getElementById("gantry1-dim-x-val");
+      const dimY1 = document.getElementById("gantry1-dim-y-val");
 
-      // Single-Mast Motion Physics:
-      // 1. Y-axis translates the horizontal cross-arm up and down along the central vertical mast
-      const crossbeamEl = document.getElementById("gantry-crossbeam");
-      if (crossbeamEl) {
-        // Clamp Y visual translation (-85px up to +85px down for -100 to +100mm)
-        const transY = Math.max(-85, Math.min(85, -this.gantryY * 0.82));
-        crossbeamEl.style.transform = `translateY(${transY}px)`;
+      // Arm 2 Elements
+      const beam2 = document.getElementById("gantry2-crossbeam");
+      const toolhead2 = document.getElementById("gantry2-toolhead");
+      const coords2 = document.getElementById("gantry2-coords-sub");
+      const dimX2 = document.getElementById("gantry2-dim-x-val");
+      const dimY2 = document.getElementById("gantry2-dim-y-val");
+
+      const sX1 = this.gantry1X >= 0 ? "+" : "";
+      const sY1 = this.gantry1Y >= 0 ? "+" : "";
+      const sX2 = this.gantry2X >= 0 ? "+" : "";
+      const sY2 = this.gantry2Y >= 0 ? "+" : "";
+
+      if (readout) {
+        readout.innerText = `A1: (${sX1}${this.gantry1X.toFixed(0)}, ${sY1}${this.gantry1Y.toFixed(0)}) | A2: (${sX2}${this.gantry2X.toFixed(0)}, ${sY2}${this.gantry2Y.toFixed(0)})`;
       }
 
-      // 2. X-axis translates the robotic toolhead left and right along the horizontal cross-arm boom
-      const toolheadEl = document.getElementById("gantry-toolhead");
-      if (toolheadEl) {
-        // Clamp X visual translation (-100px left to +100px right for -150 to +150mm)
-        const transX = Math.max(-100, Math.min(100, this.gantryX * 0.65));
-        toolheadEl.style.transform = `translateX(calc(-50% + ${transX}px))`;
+      // Update Arm 1 Visuals
+      if (beam1) {
+        const transY1 = Math.max(-85, Math.min(85, -this.gantry1Y * 0.8));
+        beam1.style.transform = `translateY(${transY1}px)`;
       }
+      if (toolhead1) {
+        const transX1 = Math.max(-48, Math.min(48, this.gantry1X * 0.6));
+        toolhead1.style.transform = `translateX(calc(-50% + ${transX1}px))`;
+      }
+      if (coords1) coords1.innerText = `(${sX1}${this.gantry1X.toFixed(0)}, ${sY1}${this.gantry1Y.toFixed(0)})`;
+      if (dimX1) dimX1.innerText = `← x1: ${sX1}${this.gantry1X.toFixed(0)} →`;
+      if (dimY1) dimY1.innerText = `y1: ${sY1}${this.gantry1Y.toFixed(0)}`;
+
+      // Update Arm 2 Visuals
+      if (beam2) {
+        const transY2 = Math.max(-85, Math.min(85, -this.gantry2Y * 0.8));
+        beam2.style.transform = `translateY(${transY2}px)`;
+      }
+      if (toolhead2) {
+        const transX2 = Math.max(-48, Math.min(48, this.gantry2X * 0.6));
+        toolhead2.style.transform = `translateX(calc(-50% + ${transX2}px))`;
+      }
+      if (coords2) coords2.innerText = `(${sX2}${this.gantry2X.toFixed(0)}, ${sY2}${this.gantry2Y.toFixed(0)})`;
+      if (dimX2) dimX2.innerText = `← x2: ${sX2}${this.gantry2X.toFixed(0)} →`;
+      if (dimY2) dimY2.innerText = `y2: ${sY2}${this.gantry2Y.toFixed(0)}`;
     };
 
     // =========================================================================
-    // DIRECT CURSOR & TOUCH DRAGGING / GRABBING FOR ROBOTIC ARM
+    // DIRECT CURSOR & TOUCH DRAGGING FOR BOTH ARMS SIDE-BY-SIDE
     // =========================================================================
     const stage = document.getElementById("gantry-interactive-stage");
-    const crossbeam = document.getElementById("gantry-crossbeam");
-    const toolhead = document.getElementById("gantry-toolhead");
 
     if (stage) {
       let isDragging = false;
+      let draggedArm = "arm1"; // which arm was grabbed
       let startPointerX = 0;
       let startPointerY = 0;
-      let startGantryX = 0;
-      let startGantryY = 0;
+      let startArmX = 0;
+      let startArmY = 0;
 
       const onPointerDown = (e) => {
-        // Only primary mouse button or touch
         if (e.button !== undefined && e.button !== 0) return;
+
+        const rect = stage.getBoundingClientRect();
+        const clickRelX = (e.clientX - rect.left) / rect.width;
+
+        // Determine which arm was grabbed (Left half = Arm 1, Right half = Arm 2)
+        if (this.activeArm === "both") {
+          draggedArm = "both";
+        } else {
+          draggedArm = clickRelX < 0.5 ? "arm1" : "arm2";
+          // Also visually sync the active selector
+          this.activeArm = draggedArm;
+          armSelectBtns.forEach((b) => {
+            b.classList.toggle("selected", b.getAttribute("data-arm") === draggedArm);
+          });
+        }
 
         isDragging = true;
         startPointerX = e.clientX;
         startPointerY = e.clientY;
-        startGantryX = this.gantryX;
-        startGantryY = this.gantryY;
+
+        if (draggedArm === "arm1" || draggedArm === "both") {
+          startArmX = this.gantry1X;
+          startArmY = this.gantry1Y;
+        } else {
+          startArmX = this.gantry2X;
+          startArmY = this.gantry2Y;
+        }
 
         try {
           stage.setPointerCapture(e.pointerId);
         } catch (_) {}
 
         stage.classList.add("is-dragging");
-        if (crossbeam) crossbeam.classList.add("is-dragging");
-        if (toolhead) toolhead.classList.add("is-dragging");
-
-        // If clicking on the stage directly (outside the arm collar), jump or start dragging from there
-        const rect = stage.getBoundingClientRect();
-        const clickRelX = (e.clientX - rect.left) / rect.width;
-        const clickRelY = (e.clientY - rect.top) / rect.height;
-
-        // Stage active travel area
-        const targetX = Math.round(((clickRelX * 300) - 150) / 5) * 5;
-        const targetY = Math.round((((1 - clickRelY) * 200) - 100) / 5) * 5;
-
-        // If user tapped directly on stage background away from center, snap towards it
-        const distFromCurrent = Math.hypot(targetX - this.gantryX, targetY - this.gantryY);
-        if (distFromCurrent > 30 && e.target === stage) {
-          this.gantryX = Math.max(-150, Math.min(150, targetX));
-          this.gantryY = Math.max(-100, Math.min(100, targetY));
-          startGantryX = this.gantryX;
-          startGantryY = this.gantryY;
-          updateGantryDisplay();
-        }
       };
 
       const onPointerMove = (e) => {
@@ -399,18 +435,27 @@ const UI = {
         const deltaPxY = e.clientY - startPointerY;
 
         const rect = stage.getBoundingClientRect();
-        // Scale factors: 300mm span across width, 200mm span across height
-        const pxPerMmX = (rect.width * 0.72) / 300;
-        const pxPerMmY = (rect.height * 0.72) / 200;
+        const pxPerMmX = (rect.width * 0.35) / 100;
+        const pxPerMmY = (rect.height * 0.7) / 200;
 
         const deltaMmX = deltaPxX / (pxPerMmX || 1);
-        const deltaMmY = -deltaPxY / (pxPerMmY || 1); // Dragging cursor up is positive Y+
+        const deltaMmY = -deltaPxY / (pxPerMmY || 1);
 
-        const newX = startGantryX + deltaMmX;
-        const newY = startGantryY + deltaMmY;
+        const newX = Math.max(-80, Math.min(80, Math.round((startArmX + deltaMmX) * 10) / 10));
+        const newY = Math.max(-100, Math.min(100, Math.round((startArmY + deltaMmY) * 10) / 10));
 
-        this.gantryX = Math.max(-150, Math.min(150, Math.round(newX * 10) / 10));
-        this.gantryY = Math.max(-100, Math.min(100, Math.round(newY * 10) / 10));
+        if (draggedArm === "arm1") {
+          this.gantry1X = newX;
+          this.gantry1Y = newY;
+        } else if (draggedArm === "arm2") {
+          this.gantry2X = newX;
+          this.gantry2Y = newY;
+        } else if (draggedArm === "both") {
+          this.gantry1X = newX;
+          this.gantry1Y = newY;
+          this.gantry2X = newX;
+          this.gantry2Y = newY;
+        }
 
         updateGantryDisplay();
       };
@@ -422,8 +467,6 @@ const UI = {
           stage.releasePointerCapture(e.pointerId);
         } catch (_) {}
         stage.classList.remove("is-dragging");
-        if (crossbeam) crossbeam.classList.remove("is-dragging");
-        if (toolhead) toolhead.classList.remove("is-dragging");
       };
 
       stage.addEventListener("pointerdown", onPointerDown);
@@ -432,7 +475,7 @@ const UI = {
       stage.addEventListener("pointercancel", onPointerUp);
     }
 
-    // Directional machine jog buttons (hold-to-jog & single-step)
+    // Directional machine jog buttons (controls active arm or both)
     document.querySelectorAll(".btn-gantry-move").forEach((btn) => {
       const axis = btn.getAttribute("data-axis");
       const dir = parseFloat(btn.getAttribute("data-dir") || "1");
@@ -442,11 +485,23 @@ const UI = {
         if (!this.isRobotOnline && !CONFIG.MOCK_MODE) {
           return;
         }
-        if (axis === "x") {
-          this.gantryX = Math.max(-150, Math.min(150, this.gantryX + dir * this.gantryStep));
-        } else if (axis === "y") {
-          this.gantryY = Math.max(-100, Math.min(100, this.gantryY + dir * this.gantryStep));
+        const delta = dir * this.gantryStep;
+
+        if (this.activeArm === "arm1" || this.activeArm === "both") {
+          if (axis === "x") {
+            this.gantry1X = Math.max(-80, Math.min(80, this.gantry1X + delta));
+          } else if (axis === "y") {
+            this.gantry1Y = Math.max(-100, Math.min(100, this.gantry1Y + delta));
+          }
         }
+        if (this.activeArm === "arm2" || this.activeArm === "both") {
+          if (axis === "x") {
+            this.gantry2X = Math.max(-80, Math.min(80, this.gantry2X + delta));
+          } else if (axis === "y") {
+            this.gantry2Y = Math.max(-100, Math.min(100, this.gantry2Y + delta));
+          }
+        }
+
         updateGantryDisplay();
       };
 
@@ -476,8 +531,10 @@ const UI = {
     const btnGantryZero = document.getElementById("btn-gantry-zero");
     if (btnGantryZero) {
       btnGantryZero.addEventListener("click", () => {
-        this.gantryX = 0.0;
-        this.gantryY = 0.0;
+        this.gantry1X = 0.0;
+        this.gantry1Y = 0.0;
+        this.gantry2X = 0.0;
+        this.gantry2Y = 0.0;
         updateGantryDisplay();
       });
     }
