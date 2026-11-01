@@ -2,12 +2,17 @@
  * ==============================================================================
  * FRUITY Q - USER INTERFACE & NAVIGATION LOGIC
  * ==============================================================================
- * Synchronized with Figma Frame 2:45:
+ * Synchronized with Figma Frame 2:45 & ROS bridge:
  * - Real-time robot status pill ("OFFLINE" vs "ONLINE")
- * - Rover connection card heading & substatus driven by live connection
- * - Module Card status badges ("LOCKED" vs "READY") & interactive state
- * - Connection guidance notice card (auto hides when online)
- * - Fixed STOP button event handling & ROS stop triggers
+ * - Dynamic Rover card connection states
+ * - Module navigation: Home <-> Fruit Picking <-> Sprinkling <-> Logistics
+ * - Fruit Picking: Pre-start checklist, start enabled only when all ticked,
+ *   status-driven step tracker (Searching -> Aligned -> Gripping -> Cutting -> Picked),
+ *   never fakes progress, displays "Waiting for robot", and Cancel button.
+ * - Sprinkling: 1 to 5s duration selector, safety confirmation dialog, feedback.
+ * - Logistics: Follow-me mode with confirmation dialog, hold-to-move arrow buttons
+ *   publishing Twist at 10 Hz only while held down, publish zero on release/leave.
+ * - Emergency STOP button handling across all views.
  * ==============================================================================
  */
 
@@ -16,12 +21,18 @@ const UI = {
   selectedSprayDuration: CONFIG.SPRAY.DEFAULT_DURATION_SEC,
   isRobotOnline: false,
 
+  // Pending dangerous action confirmation callback
+  pendingActionConfirmFn: null,
+
   init() {
     this.setupSplashScreen();
     this.setupDemoBanner();
     this.setupNavigation();
+    this.setupFruitPickingScreen();
     this.setupSprinklingScreen();
+    this.setupLogisticsScreen();
     this.setupEmergencyStop();
+    this.setupConfirmationModal();
     this.hookROSCallbacks();
 
     // Set initial connection state to OFFLINE
@@ -56,6 +67,14 @@ const UI = {
    * 3. Navigation between screens
    */
   setupNavigation() {
+    const cardPicking = document.getElementById("card-nav-picking");
+    if (cardPicking) {
+      cardPicking.addEventListener("click", () => {
+        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
+        this.navigateTo("picking-screen");
+      });
+    }
+
     const cardSprinkling = document.getElementById("card-nav-sprinkling");
     if (cardSprinkling) {
       cardSprinkling.addEventListener("click", () => {
@@ -64,19 +83,11 @@ const UI = {
       });
     }
 
-    const cardPicking = document.getElementById("card-nav-picking");
-    if (cardPicking) {
-      cardPicking.addEventListener("click", () => {
-        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
-        alert("Fruit Picking module will be enabled in the next phase.");
-      });
-    }
-
     const cardLogistics = document.getElementById("card-nav-logistics");
     if (cardLogistics) {
       cardLogistics.addEventListener("click", () => {
         if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
-        alert("Logistics module will be enabled in the next phase.");
+        this.navigateTo("logistics-screen");
       });
     }
 
@@ -103,15 +114,156 @@ const UI = {
   },
 
   /**
-   * 4. Sprinkling Screen Setup
+   * 4. Confirmation Dialog System (For dangerous actions: Spray & Follow-Me)
+   */
+  setupConfirmationModal() {
+    const modal = document.getElementById("action-confirm-modal");
+    const btnYes = document.getElementById("btn-confirm-yes");
+    const btnNo = document.getElementById("btn-confirm-no");
+
+    if (btnNo) {
+      btnNo.addEventListener("click", () => {
+        modal.classList.remove("active");
+        this.pendingActionConfirmFn = null;
+      });
+    }
+
+    if (btnYes) {
+      btnYes.addEventListener("click", () => {
+        modal.classList.remove("active");
+        if (typeof this.pendingActionConfirmFn === "function") {
+          this.pendingActionConfirmFn();
+        }
+        this.pendingActionConfirmFn = null;
+      });
+    }
+  },
+
+  showConfirmation(title, message, confirmCallback) {
+    const modal = document.getElementById("action-confirm-modal");
+    const titleEl = document.getElementById("confirm-modal-title");
+    const bodyEl = document.getElementById("confirm-modal-body");
+
+    if (!modal) return;
+    if (titleEl) titleEl.innerText = title;
+    if (bodyEl) bodyEl.innerHTML = message;
+    this.pendingActionConfirmFn = confirmCallback;
+    modal.classList.add("active");
+  },
+
+  /**
+   * 5. Fruit Picking Screen Logic
+   */
+  setupFruitPickingScreen() {
+    const checkboxes = document.querySelectorAll(".safety-check");
+    const btnStart = document.getElementById("btn-start-picking");
+    const btnCancel = document.getElementById("btn-cancel-picking");
+    const checklistPanel = document.getElementById("checklist-panel");
+    const trackerPanel = document.getElementById("tracker-panel");
+    const livePickStatus = document.getElementById("live-pick-status");
+
+    // Pre-start checklist: Start enabled ONLY when all 4 are ticked
+    const checkChecklistCompletion = () => {
+      const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+      if (btnStart) {
+        btnStart.disabled = !allChecked || (!this.isRobotOnline && !CONFIG.MOCK_MODE);
+      }
+    };
+
+    checkboxes.forEach((cb) => {
+      cb.addEventListener("change", checkChecklistCompletion);
+    });
+
+    // Start Picking
+    if (btnStart) {
+      btnStart.addEventListener("click", () => {
+        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) {
+          alert("Cannot start: Robot is OFFLINE!");
+          return;
+        }
+
+        // Switch view to tracker panel
+        checklistPanel.style.display = "none";
+        trackerPanel.style.display = "flex";
+
+        // Reset step nodes to default
+        this.resetPickingStepTracker();
+
+        // Safety rule: Never fake progress. Show "Waiting for robot" until status message arrives.
+        if (livePickStatus) {
+          livePickStatus.innerText = "Waiting for robot";
+        }
+
+        // Publish start command to ROS
+        ROSManager.startPicking();
+      });
+    }
+
+    // Cancel Picking
+    if (btnCancel) {
+      btnCancel.addEventListener("click", () => {
+        ROSManager.cancelPicking();
+        this.showChecklistPanel();
+      });
+    }
+  },
+
+  showChecklistPanel() {
+    const checklistPanel = document.getElementById("checklist-panel");
+    const trackerPanel = document.getElementById("tracker-panel");
+    const livePickStatus = document.getElementById("live-pick-status");
+
+    if (checklistPanel) checklistPanel.style.display = "flex";
+    if (trackerPanel) trackerPanel.style.display = "none";
+    if (livePickStatus) livePickStatus.innerText = "Waiting for robot";
+    this.resetPickingStepTracker();
+  },
+
+  resetPickingStepTracker() {
+    const steps = ["Searching", "Aligned", "Gripping", "Cutting", "Picked"];
+    steps.forEach((step) => {
+      const node = document.getElementById(`step-node-${step}`);
+      if (node) {
+        node.className = "step-node";
+      }
+    });
+  },
+
+  /**
+   * Update Fruit Picking Step Tracker driven ONLY by robot's status topic
+   */
+  updatePickingStep(stepName) {
+    const livePickStatus = document.getElementById("live-pick-status");
+    if (livePickStatus) {
+      livePickStatus.innerText = stepName;
+    }
+
+    const steps = ["Searching", "Aligned", "Gripping", "Cutting", "Picked"];
+    const targetIndex = steps.indexOf(stepName);
+
+    if (targetIndex >= 0) {
+      steps.forEach((step, idx) => {
+        const node = document.getElementById(`step-node-${step}`);
+        if (!node) return;
+        if (idx < targetIndex) {
+          node.className = "step-node completed";
+        } else if (idx === targetIndex) {
+          node.className = "step-node active";
+        } else {
+          node.className = "step-node";
+        }
+      });
+    } else if (stepName === "Cancelled" || stepName === "IDLE") {
+      this.showChecklistPanel();
+    }
+  },
+
+  /**
+   * 6. Sprinkling Screen Setup
    */
   setupSprinklingScreen() {
     const durationContainer = document.getElementById("duration-selector-container");
     const btnSpray = document.getElementById("btn-trigger-spray");
-    const confirmModal = document.getElementById("spray-confirm-modal");
-    const btnConfirmYes = document.getElementById("btn-spray-confirm-yes");
-    const btnConfirmNo = document.getElementById("btn-spray-confirm-no");
-    const confirmDurationText = document.getElementById("confirm-spray-duration-text");
 
     if (!durationContainer) return;
 
@@ -130,32 +282,21 @@ const UI = {
       durationContainer.appendChild(btn);
     }
 
-    // Spray Button click
+    // "Trigger Spray" Button click -> Dangerous action: Requires Confirmation Dialog
     if (btnSpray) {
       btnSpray.addEventListener("click", () => {
         if (!this.isRobotOnline && !CONFIG.MOCK_MODE) {
           alert("Cannot spray: Robot is OFFLINE!");
           return;
         }
-        if (confirmDurationText) {
-          confirmDurationText.innerText = `${this.selectedSprayDuration} second(s)`;
-        }
-        confirmModal.classList.add("active");
-      });
-    }
 
-    // Modal Cancel
-    if (btnConfirmNo) {
-      btnConfirmNo.addEventListener("click", () => {
-        confirmModal.classList.remove("active");
-      });
-    }
-
-    // Modal Confirm
-    if (btnConfirmYes) {
-      btnConfirmYes.addEventListener("click", () => {
-        confirmModal.classList.remove("active");
-        this.executeSpray(this.selectedSprayDuration);
+        this.showConfirmation(
+          "Confirm Spray",
+          `Ensure humans and animals are clear of the nozzle path.<br><br>Activate spray for <strong>${this.selectedSprayDuration} second(s)</strong>?`,
+          () => {
+            this.executeSpray(this.selectedSprayDuration);
+          }
+        );
       });
     }
   },
@@ -191,7 +332,66 @@ const UI = {
   },
 
   /**
-   * 5. Fixed Emergency STOP Button
+   * 7. Logistics Screen Setup
+   */
+  setupLogisticsScreen() {
+    const toggleFollowMe = document.getElementById("toggle-follow-me");
+    const teleopButtons = document.querySelectorAll(".btn-teleop");
+
+    // Follow-Me Toggle: Dangerous action -> requires confirmation dialog
+    if (toggleFollowMe) {
+      toggleFollowMe.addEventListener("change", (e) => {
+        const wantsToEnable = toggleFollowMe.checked;
+
+        if (wantsToEnable) {
+          // Temporarily uncheck until confirmed
+          toggleFollowMe.checked = false;
+
+          this.showConfirmation(
+            "Enable Follow-Me Mode?",
+            "The robot will track and follow human targets autonomously. Ensure path is clear of obstacles.",
+            () => {
+              toggleFollowMe.checked = true;
+              ROSManager.setFollowMe(true);
+            }
+          );
+        } else {
+          ROSManager.setFollowMe(false);
+        }
+      });
+    }
+
+    // Teleop buttons: Publish Twist at 10 Hz ONLY while held; publish zero on release
+    teleopButtons.forEach((btn) => {
+      const linear = parseFloat(btn.getAttribute("data-linear") || "0");
+      const angular = parseFloat(btn.getAttribute("data-angular") || "0");
+
+      const handlePress = (e) => {
+        e.preventDefault();
+        btn.classList.add("active-holding");
+        ROSManager.startTeleop(linear, angular);
+      };
+
+      const handleRelease = (e) => {
+        e.preventDefault();
+        btn.classList.remove("active-holding");
+        ROSManager.stopTeleop();
+      };
+
+      // Mouse events
+      btn.addEventListener("mousedown", handlePress);
+      btn.addEventListener("mouseup", handleRelease);
+      btn.addEventListener("mouseleave", handleRelease);
+
+      // Touch events (mobile)
+      btn.addEventListener("touchstart", handlePress, { passive: false });
+      btn.addEventListener("touchend", handleRelease, { passive: false });
+      btn.addEventListener("touchcancel", handleRelease, { passive: false });
+    });
+  },
+
+  /**
+   * 8. Fixed Emergency STOP Button
    */
   setupEmergencyStop() {
     const btnStop = document.getElementById("btn-global-stop");
@@ -203,7 +403,7 @@ const UI = {
         ROSManager.triggerEmergencyStop();
         btnStop.classList.add("active-stopped");
         if (btnStopText) btnStopText.innerText = "RESUME E-STOP";
-        alert("EMERGENCY STOP ACTIVATED!\nAll motors and pumps have been signaled to halt immediately.");
+        alert("EMERGENCY STOP ACTIVATED!\nAll motors, teleop movement and spray pumps halted immediately.");
       } else {
         const confirmReset = confirm("Are you sure you want to release Emergency Stop?");
         if (confirmReset) {
@@ -216,7 +416,7 @@ const UI = {
   },
 
   /**
-   * 6. Hook ROS Manager callbacks
+   * 9. Hook ROS Manager callbacks
    */
   hookROSCallbacks() {
     ROSManager.onConnectionChange = (isOnline) => {
@@ -225,9 +425,13 @@ const UI = {
 
     ROSManager.onEStopChange = (isEStopped) => {
       const btnSpray = document.getElementById("btn-trigger-spray");
-      if (btnSpray) {
-        btnSpray.disabled = isEStopped || !this.isRobotOnline;
-      }
+      const btnStartPick = document.getElementById("btn-start-picking");
+      if (btnSpray) btnSpray.disabled = isEStopped || !this.isRobotOnline;
+      if (btnStartPick) btnStartPick.disabled = isEStopped || !this.isRobotOnline;
+    };
+
+    ROSManager.onPickStateChange = (stateName) => {
+      this.updatePickingStep(stateName);
     };
   },
 
@@ -303,6 +507,14 @@ const UI = {
         if (label) label.innerText = "LOCKED";
       }
     });
+
+    // Check pre-start button state
+    const checkboxes = document.querySelectorAll(".safety-check");
+    const btnStart = document.getElementById("btn-start-picking");
+    if (btnStart) {
+      const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+      btnStart.disabled = !allChecked || (!isOnline && !CONFIG.MOCK_MODE);
+    }
 
     // Spray Button
     const btnSpray = document.getElementById("btn-trigger-spray");

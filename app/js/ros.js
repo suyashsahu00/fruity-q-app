@@ -5,7 +5,8 @@
  * Handles:
  * - WebSocket connection with automatic retry every 3 seconds
  * - Heartbeat monitoring (3 missed beats = OFFLINE status + disable action buttons)
- * - Safe publish helper functions for E-Stop, Sprinkler, Teleop, etc.
+ * - Safe publish helper functions for E-Stop, Sprinkler, Picking, Follow-Me & Teleop
+ * - Safety rule: Movement buttons publish Twist at 10Hz only while held; publish zero on release/disconnect
  * ==============================================================================
  */
 
@@ -21,9 +22,15 @@ const ROSManager = {
   // Topics cache
   topics: {},
 
+  // Teleop loop timer
+  teleopTimer: null,
+  currentTwist: { linear: { x: 0, y: 0, z: 0 }, angular: { x: 0, y: 0, z: 0 } },
+
   // Event callbacks for UI
   onConnectionChange: null, // fn(isOnline)
   onEStopChange: null,      // fn(isEStopped)
+  onPickStateChange: null,  // fn(stateString)
+  onSprayStatusChange: null,// fn(statusString)
 
   init() {
     if (CONFIG.MOCK_MODE) {
@@ -83,6 +90,7 @@ const ROSManager = {
 
   handleDisconnect() {
     this.isConnected = false;
+    this.stopTeleopLoop(); // Safety rule: Stop movement on disconnect
     this.updateOnlineState(false);
 
     // Schedule auto-reconnect if not already running
@@ -99,14 +107,13 @@ const ROSManager = {
       if (!this.isConnected && !CONFIG.MOCK_MODE) return;
 
       const elapsed = Date.now() - this.lastHeartbeatTime;
-      // If no heartbeat within interval, increment missed count
       if (this.lastHeartbeatTime > 0 && elapsed > CONFIG.HEARTBEAT_INTERVAL_MS) {
         this.missedHeartbeats++;
         console.warn(`[ROSManager] Missed heartbeat (${this.missedHeartbeats}/${CONFIG.MAX_MISSED_HEARTBEATS})`);
 
         if (this.missedHeartbeats >= CONFIG.MAX_MISSED_HEARTBEATS) {
           console.error("[ROSManager] Robot heartbeat lost! Marking robot as OFFLINE.");
-          this.updateOnlineState(false);
+          this.handleDisconnect();
         }
       }
     }, CONFIG.HEARTBEAT_INTERVAL_MS);
@@ -130,19 +137,48 @@ const ROSManager = {
   setupSubscriptions() {
     if (CONFIG.MOCK_MODE || !this.ros) return;
 
-    // Heartbeat subscriber
+    // 1. Heartbeat subscriber
     try {
       const heartbeatSub = new ROSLIB.Topic({
         ros: this.ros,
         name: CONFIG.TOPICS.HEARTBEAT.name,
         messageType: CONFIG.TOPICS.HEARTBEAT.messageType
       });
-
-      heartbeatSub.subscribe((message) => {
-        this.handleHeartbeat();
-      });
+      heartbeatSub.subscribe(() => this.handleHeartbeat());
     } catch (e) {
       console.error("[ROSManager] Could not subscribe to heartbeat:", e);
+    }
+
+    // 2. Fruit Picking State subscriber
+    try {
+      const pickStateSub = new ROSLIB.Topic({
+        ros: this.ros,
+        name: CONFIG.TOPICS.PICK_STATE.name,
+        messageType: CONFIG.TOPICS.PICK_STATE.messageType
+      });
+      pickStateSub.subscribe((message) => {
+        if (this.onPickStateChange) {
+          this.onPickStateChange(message.data);
+        }
+      });
+    } catch (e) {
+      console.error("[ROSManager] Could not subscribe to pick state:", e);
+    }
+
+    // 3. Spray Status subscriber
+    try {
+      const sprayStatusSub = new ROSLIB.Topic({
+        ros: this.ros,
+        name: CONFIG.TOPICS.SPRAY_STATUS.name,
+        messageType: CONFIG.TOPICS.SPRAY_STATUS.messageType
+      });
+      sprayStatusSub.subscribe((message) => {
+        if (this.onSprayStatusChange) {
+          this.onSprayStatusChange(message.data);
+        }
+      });
+    } catch (e) {
+      console.error("[ROSManager] Could not subscribe to spray status:", e);
     }
   },
 
@@ -174,7 +210,6 @@ const ROSManager = {
       const topic = this.getTopic(topicConfig);
       const message = new ROSLIB.Message(messageData);
       topic.publish(message);
-      console.log(`[ROSManager] Published to ${topicConfig.name}:`, messageData);
       return true;
     } catch (err) {
       console.error(`[ROSManager] Publish failed on ${topicConfig.name}:`, err);
@@ -183,30 +218,19 @@ const ROSManager = {
   },
 
   // ----------------------------------------------------------------------------
-  // HELPER ACTIONS
+  // SAFETY & ACTIONS
   // ----------------------------------------------------------------------------
 
   /**
-   * Emergency Stop
-   * Sends estop = true, zeroes twist, stops spraying, cancels picking
+   * Emergency Stop: estop true, zero Twist, stop spray, cancel pick
    */
   triggerEmergencyStop() {
     console.warn("[ROSManager] 🚨 EMERGENCY STOP ACTIVATED!");
     this.isEStopped = true;
 
-    // 1. Publish E-STOP flag
     this.publish(CONFIG.TOPICS.EMERGENCY_STOP, { data: true });
-
-    // 2. Publish zero velocity
-    this.publish(CONFIG.TOPICS.CMD_VEL, {
-      linear: { x: 0, y: 0, z: 0 },
-      angular: { x: 0, y: 0, z: 0 }
-    });
-
-    // 3. Stop spray
+    this.stopTeleopLoop(); // sends zeros
     this.publish(CONFIG.TOPICS.SPRAY_STOP, { data: true });
-
-    // 4. Cancel picking
     this.publish(CONFIG.TOPICS.PICK_CANCEL, { data: true });
 
     if (this.onEStopChange) {
@@ -214,9 +238,6 @@ const ROSManager = {
     }
   },
 
-  /**
-   * Reset Emergency Stop
-   */
   resetEmergencyStop() {
     console.log("[ROSManager] Resetting Emergency Stop state.");
     this.isEStopped = false;
@@ -227,26 +248,70 @@ const ROSManager = {
     }
   },
 
-  /**
-   * Trigger Sprinkler for duration (enforcing hard cap)
-   */
+  // Sprinkler
   triggerSpray(durationSeconds) {
-    // Enforce hard cap from config
     const safeDuration = Math.min(
       Math.max(durationSeconds, CONFIG.SPRAY.MIN_DURATION_SEC),
       CONFIG.SPRAY.MAX_DURATION_SEC
     );
-
-    console.log(`[ROSManager] Spray triggered for ${safeDuration} seconds.`);
     return this.publish(CONFIG.TOPICS.SPRAY_TRIGGER, { data: safeDuration });
   },
 
-  /**
-   * Stop Sprinkler immediately
-   */
   stopSpray() {
-    console.log("[ROSManager] Spray stop triggered.");
     return this.publish(CONFIG.TOPICS.SPRAY_STOP, { data: true });
+  },
+
+  // Fruit Picking
+  startPicking() {
+    console.log("[ROSManager] Starting fruit picking sequence...");
+    return this.publish(CONFIG.TOPICS.PICK_START, { data: true });
+  },
+
+  cancelPicking() {
+    console.warn("[ROSManager] Cancelling fruit picking sequence...");
+    return this.publish(CONFIG.TOPICS.PICK_CANCEL, { data: true });
+  },
+
+  // Follow-Me Mode
+  setFollowMe(enabled) {
+    console.log(`[ROSManager] Setting Follow-Me mode to ${enabled}`);
+    return this.publish(CONFIG.TOPICS.FOLLOW_ME, { data: !!enabled });
+  },
+
+  // Teleop (Hold-to-move arrow buttons at 10 Hz)
+  startTeleop(linearX, angularZ) {
+    if (this.isEStopped || (!this.isConnected && !CONFIG.MOCK_MODE)) return;
+
+    this.currentTwist = {
+      linear: { x: linearX * CONFIG.TELEOP.LINEAR_SPEED, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: angularZ * CONFIG.TELEOP.ANGULAR_SPEED }
+    };
+
+    // Immediately publish once
+    this.publish(CONFIG.TOPICS.CMD_VEL, this.currentTwist);
+
+    // Start 10 Hz repeating timer (100ms)
+    if (this.teleopTimer) clearInterval(this.teleopTimer);
+    const intervalMs = Math.round(1000 / CONFIG.TELEOP.PUBLISH_RATE_HZ);
+    this.teleopTimer = setInterval(() => {
+      this.publish(CONFIG.TOPICS.CMD_VEL, this.currentTwist);
+    }, intervalMs);
+  },
+
+  stopTeleop() {
+    this.stopTeleopLoop();
+  },
+
+  stopTeleopLoop() {
+    if (this.teleopTimer) {
+      clearInterval(this.teleopTimer);
+      this.teleopTimer = null;
+    }
+    this.currentTwist = {
+      linear: { x: 0, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: 0 }
+    };
+    // Always publish zero on release, disconnect, or stop
+    this.publish(CONFIG.TOPICS.CMD_VEL, this.currentTwist);
   }
 };
-

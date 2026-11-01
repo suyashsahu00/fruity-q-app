@@ -63,6 +63,7 @@
 
   /* Identity Orange Accent */
   --color-accent-orange: #FF7A00;
+  --color-accent-orange-hover: #E06C00;
 
   /* ------------------------------------------------------------------------
      2. SPACING SCALE (From Figma autolayout gap & padding)
@@ -669,7 +670,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   SPRINKLING SCREEN
+   SHARED SCREEN & HEADER
    -------------------------------------------------------------------------- */
 .screen {
   display: none;
@@ -681,7 +682,7 @@ body {
   display: flex;
 }
 
-.sprinkling-header {
+.screen-sub-header {
   display: flex;
   align-items: center;
   gap: var(--space-10);
@@ -706,15 +707,297 @@ body {
   stroke: var(--color-text-main);
 }
 
-.sprinkling-panel {
+.screen-card-panel {
   background-color: var(--color-surface-white);
   border-radius: var(--radius-card);
   padding: var(--space-16);
   display: flex;
   flex-direction: column;
   gap: var(--space-14);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+/* --------------------------------------------------------------------------
+   FRUIT PICKING SCREEN (Checklist + Status-Driven Step Tracker)
+   -------------------------------------------------------------------------- */
+.checklist-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-10) var(--space-12);
+  background-color: var(--color-canvas-bg);
+  border-radius: var(--radius-guidance);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent-orange);
+  cursor: pointer;
+}
+
+.checklist-label {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.btn-action-primary {
+  background-color: var(--color-accent-orange);
+  color: #FFFFFF;
+  font-size: var(--font-size-card-title);
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-guidance);
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+  transition: background 0.15s ease, opacity 0.2s ease;
+}
+
+.btn-action-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #9AA0A6;
+  box-shadow: none;
+}
+
+/* Step Tracker */
+.tracker-status-box {
+  background-color: var(--color-canvas-bg);
+  border-radius: var(--radius-guidance);
+  padding: var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.tracker-headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tracker-live-label {
+  font-size: var(--font-size-card-title);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.step-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  position: relative;
+}
+
+.step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 1;
+  text-align: center;
+}
+
+.step-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-surface-white);
+  border: 2px solid var(--color-surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sync);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.step-node.completed .step-dot {
+  background-color: var(--color-ready-bg);
+  border-color: var(--color-ready-dot);
+  color: var(--color-ready-text);
+}
+
+.step-node.active .step-dot {
+  background-color: var(--color-accent-orange);
+  border-color: var(--color-accent-orange);
+  color: #FFFFFF;
+  box-shadow: 0 0 8px rgba(255, 122, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.step-label {
+  font-size: var(--font-size-sync);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.step-node.completed .step-label,
+.step-node.active .step-label {
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
+.btn-action-cancel {
+  background-color: var(--color-status-offline-bg);
+  color: var(--color-status-offline-text);
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  border: 1px solid rgba(199, 33, 31, 0.2);
+  border-radius: var(--radius-guidance);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  cursor: pointer;
+  margin-top: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+   LOGISTICS SCREEN (Follow-me Toggle & 10Hz Arrow Teleop)
+   -------------------------------------------------------------------------- */
+.follow-me-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-12) var(--space-14);
+  background-color: var(--color-canvas-bg);
+  border-radius: var(--radius-guidance);
+}
+
+.follow-me-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.follow-me-title {
+  font-size: var(--font-size-card-title);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.follow-me-sub {
+  font-size: var(--font-size-body);
+  color: var(--color-text-sub);
+}
+
+/* Modern iOS Style Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #CBD5E1;
+  transition: 0.25s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.25s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: var(--color-accent-orange);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Directional D-Pad for Teleop */
+.teleop-dpad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.dpad-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.btn-teleop {
+  width: 68px;
+  height: 68px;
+  background-color: var(--color-canvas-bg);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-guidance);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.btn-teleop svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--color-text-main);
+}
+
+.btn-teleop:active, .btn-teleop.active-holding {
+  background-color: var(--color-text-main);
+  border-color: var(--color-text-main);
+  transform: scale(0.94);
+}
+
+.btn-teleop:active svg, .btn-teleop.active-holding svg {
+  stroke: #FFFFFF;
+}
+
+.dpad-center-spacer {
+  width: 68px;
+  height: 68px;
+}
+
+/* --------------------------------------------------------------------------
+   SPRINKLING SCREEN
+   -------------------------------------------------------------------------- */
 .duration-selector {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -770,33 +1053,6 @@ body {
 .status-callout.success {
   background-color: var(--color-ready-bg);
   color: var(--color-ready-text);
-}
-
-.btn-spray-action {
-  background-color: var(--color-accent-orange);
-  color: #FFFFFF;
-  font-size: var(--font-size-card-title);
-  font-weight: 700;
-  border: none;
-  border-radius: var(--radius-guidance);
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-8);
-  cursor: pointer;
-}
-
-.btn-spray-action svg {
-  width: 18px;
-  height: 18px;
-  stroke: #FFFFFF;
-}
-
-.btn-spray-action:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: #9AA0A6;
 }
 
 /* Modal */
