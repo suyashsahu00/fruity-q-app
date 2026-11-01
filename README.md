@@ -71,3 +71,4 @@ Bina robot ke saare buttons aur flow check karne ke liye:
 ### Step 4: Fixed Emergency STOP Test karein
 1. Screen ke bottom par hamesha ek bada red **🛑 EMERGENCY STOP** button rehta hai.
 2. Isse press karte hi robot ko instant stop signal chala jayega aur button "RESUME / RESET E-STOP" me badal jayega.
+

@@ -46,3 +46,4 @@ This document lists all ROS topics, message types, and directions of communicati
 
 ## Instructions for Vikas / Hardware Team
 Please review the topic names above and replace every `TODO_ASK_VIKAS/...` path with your actual ROS / ROS2 rosbridge topics. Update `app/js/config.js` accordingly.
+
