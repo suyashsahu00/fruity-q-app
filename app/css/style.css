@@ -1,11 +1,12 @@
 /* ==========================================================================
    FRUITY Q - POLISHED MOBILE-FIRST PRODUCTION STYLESHEET
-   - Dark translucent glass cards on energizing gradient
-   - High-contrast pure white (#FFFFFF) bold titles & 85% opacity descriptions
-   - Lucide icons (stroke-width: 2, 28px in cards)
-   - Strict 16px spatial grid, system typography scale
-   - 56px compact bottom fixed STOP bar with bottom safe-area insets
-   - Subtly shifting gradient & responsive 380px mobile viewport optimization
+   - Dark neutral glass cards (rgba(20,20,25,0.55)) on energizing gradient
+   - Contrast-tuned pure white (#FFFFFF) bold titles & 85% opacity descriptions
+   - Standout red STOP (#D50000) & OFFLINE cues
+   - One "Robot not connected" banner when offline; dimmed non-tappable cards
+   - Dynamic Rover connection status ("Connected" / "Not connected")
+   - Generous bottom padding to ensure zero STOP bar overlap
+   - Inline Lucide icons (droplets, apple, route, octagon) & 16px STOP text
    ========================================================================== */
 
 :root {
@@ -13,7 +14,6 @@
   --grad-start: #d84315;
   --grad-mid: #bf360c;
   --grad-end: #870000;
-  --accent-orange: #ff6f00;
   --status-online: #2e7d32;
   --status-online-glow: #4caf50;
   --status-offline: #d32f2f;
@@ -22,28 +22,27 @@
   --stop-red: #d50000;
   --stop-active-yellow: #ffd600;
 
-  /* Glass Surface System */
-  --glass-bg: rgba(0, 0, 0, 0.28);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-border-hover: rgba(255, 255, 255, 0.35);
-  --glass-panel-bg: rgba(0, 0, 0, 0.42);
-  --glass-blur: blur(10px);
+  /* Polished Dark Neutral Glass Surface System */
+  --glass-bg: rgba(20, 20, 25, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-hover: rgba(255, 255, 255, 0.32);
+  --glass-panel-bg: rgba(18, 18, 22, 0.68);
+  --glass-blur: blur(12px);
   --card-radius: 20px;
   --btn-radius: 14px;
   --pill-radius: 9999px;
 
-  /* Typography Colors */
+  /* High-Contrast Typography */
   --text-pure: #ffffff;
   --text-muted: rgba(255, 255, 255, 0.85);
   --text-dim: rgba(255, 255, 255, 0.65);
 
   /* Shadows */
-  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.42);
+  --shadow-card-hover: 0 14px 34px rgba(0, 0, 0, 0.52);
 
-  /* Fixed Bar Metrics */
+  /* Fixed Bar & Spacing Metrics */
   --stop-bar-height: 56px;
-  --stop-bar-gap: 16px;
 }
 
 /* Reset & Box Model */
@@ -71,8 +70,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  /* Content padding at bottom = stop bar height (56px) + 16px gap + safe-area */
-  padding-bottom: calc(var(--stop-bar-height) + var(--stop-bar-gap) + max(16px, env(safe-area-inset-bottom)));
+  /* Generous padding-bottom so the last card is fully visible with extra breathing room above STOP bar */
+  padding-bottom: calc(var(--stop-bar-height) + 36px + max(16px, env(safe-area-inset-bottom)));
 }
 
 @keyframes subtleGradientShift {
@@ -165,7 +164,7 @@ body {
 .splash-icon-wrapper {
   width: 80px;
   height: 80px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(20, 20, 25, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.25);
   backdrop-filter: var(--glass-blur);
   border-radius: 24px;
@@ -229,8 +228,9 @@ body {
 .app-brand .brand-logo-icon {
   width: 32px;
   height: 32px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -256,8 +256,8 @@ body {
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--pill-radius);
-  background: rgba(0, 0, 0, 0.38);
-  border: 1px solid rgba(239, 83, 80, 0.45);
+  background: rgba(15, 15, 20, 0.7);
+  border: 1px solid rgba(239, 83, 80, 0.55);
   backdrop-filter: var(--glass-blur);
   font-size: 12px;
   font-weight: 700;
@@ -271,13 +271,36 @@ body {
 }
 
 .status-pill.online {
-  border-color: rgba(76, 175, 80, 0.5);
-  background: rgba(20, 60, 25, 0.45);
+  border-color: rgba(76, 175, 80, 0.6);
+  background: rgba(10, 35, 15, 0.65);
   color: #c8e6c9;
 }
 
 .status-pill.online .lucide-icon-sm {
   color: #4caf50;
+}
+
+/* --------------------------------------------------------------------------
+   ONE OFFLINE BANNER UNDER HEADER ("Robot not connected")
+   -------------------------------------------------------------------------- */
+.offline-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(213, 0, 0, 0.22);
+  border: 1px solid rgba(239, 83, 80, 0.45);
+  backdrop-filter: var(--glass-blur);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffebee;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.offline-notice-banner .lucide-icon-sm {
+  color: #ef5350;
 }
 
 /* --------------------------------------------------------------------------
@@ -300,7 +323,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   ROBOT HERO MEDIA CARD (With Lucide Bot Fallback)
+   ROBOT HERO MEDIA CARD (With Dynamic Connection State)
    -------------------------------------------------------------------------- */
 .hero-media-card {
   position: relative;
@@ -337,7 +360,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: linear-gradient(145deg, rgba(30, 10, 10, 0.65), rgba(15, 5, 5, 0.85));
+  background: linear-gradient(145deg, rgba(15, 15, 20, 0.75), rgba(10, 10, 15, 0.9));
 }
 
 .hero-fallback-icon {
@@ -370,7 +393,7 @@ body {
   left: 0;
   right: 0;
   z-index: 2;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -385,7 +408,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   ACTION CARDS (Home Screen Grid)
+   ACTION CARDS (Dark neutral glass: rgba(20,20,25,0.55), blur 12px)
    -------------------------------------------------------------------------- */
 .cards-grid {
   display: flex;
@@ -407,27 +430,30 @@ body {
   padding: 16px 18px;
   box-shadow: var(--shadow-soft);
   cursor: pointer;
-  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease, opacity 0.2s ease;
 }
 
 /* Subtle motion: press-scale to 0.97 on tap */
 .action-card:active:not(.disabled) {
   transform: scale(0.97);
   border-color: var(--glass-border-hover);
-  background: rgba(0, 0, 0, 0.38);
+  background: rgba(25, 25, 32, 0.75);
 }
 
+/* Dimmed, non-tappable state when robot is offline or module disabled */
 .action-card.disabled {
-  opacity: 0.65;
+  opacity: 0.48;
   cursor: not-allowed;
+  pointer-events: none;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .action-card-icon {
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -457,8 +483,9 @@ body {
   word-break: break-word;
 }
 
-/* Small Live Status Chip (Replaces old MODULE 1/2/3 badges) */
+/* Small Live Status Chip ("Ready" / "Busy" - hidden when offline) */
 .live-status-chip {
+  display: none; /* Hidden by default when offline */
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -468,7 +495,6 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-dim);
-  display: inline-flex;
   align-items: center;
   gap: 5px;
   flex-shrink: 0;
@@ -485,8 +511,9 @@ body {
 
 /* Status variants */
 .live-status-chip.chip-ready {
-  background: rgba(46, 125, 50, 0.25);
-  border-color: rgba(76, 175, 80, 0.4);
+  display: inline-flex;
+  background: rgba(46, 125, 50, 0.3);
+  border-color: rgba(76, 175, 80, 0.45);
   color: #c8e6c9;
 }
 .live-status-chip.chip-ready::before {
@@ -494,18 +521,10 @@ body {
   box-shadow: 0 0 6px #4caf50;
 }
 
-.live-status-chip.chip-offline {
-  background: rgba(211, 47, 47, 0.2);
-  border-color: rgba(239, 83, 80, 0.35);
-  color: #ffcdd2;
-}
-.live-status-chip.chip-offline::before {
-  background: #ef5350;
-}
-
 .live-status-chip.chip-busy {
-  background: rgba(245, 127, 23, 0.25);
-  border-color: rgba(255, 179, 0, 0.4);
+  display: inline-flex;
+  background: rgba(245, 127, 23, 0.3);
+  border-color: rgba(255, 179, 0, 0.45);
   color: #fff9c4;
 }
 .live-status-chip.chip-busy::before {
@@ -575,8 +594,8 @@ body {
 }
 
 .btn-duration {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #ffffff;
   font-size: 18px;
   font-weight: 700;
@@ -647,7 +666,7 @@ body {
 .btn-primary-action:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
   box-shadow: none;
 }
@@ -698,8 +717,8 @@ body {
 }
 
 .modal-card {
-  background: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #18181c;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--card-radius);
   padding: 24px 20px;
   max-width: 360px;
@@ -764,7 +783,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   COMPACT FIXED EMERGENCY STOP BAR (Height: 56px)
+   COMPACT FIXED EMERGENCY STOP BAR (Height: 56px, Text: 16px, Red: #D50000)
    -------------------------------------------------------------------------- */
 .fixed-stop-container {
   position: fixed;
@@ -773,7 +792,7 @@ body {
   right: 0;
   height: calc(var(--stop-bar-height) + max(12px, env(safe-area-inset-bottom)));
   padding: 0 16px max(12px, env(safe-area-inset-bottom));
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -788,7 +807,7 @@ body {
   height: var(--stop-bar-height); /* Strict 56px height */
   background: var(--stop-red);
   color: #ffffff;
-  font-size: 18px;
+  font-size: 16px; /* Reduced to 16px */
   font-weight: 800;
   letter-spacing: 1.2px;
   border: 2px solid rgba(255, 255, 255, 0.35);
@@ -804,8 +823,8 @@ body {
 }
 
 .btn-emergency-stop .lucide-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .btn-emergency-stop:active {
@@ -814,7 +833,7 @@ body {
 }
 
 .btn-emergency-stop.active-stopped {
-  background: #212121;
+  background: #18181c;
   border-color: var(--stop-active-yellow);
   color: var(--stop-active-yellow);
 }

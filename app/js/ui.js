@@ -8,7 +8,8 @@
  * - Duration selector for Sprinkling (1 to 5 seconds)
  * - Confirmation dialog before triggering the spray
  * - Real-time robot ONLINE / OFFLINE pill status update with Lucide Wifi icons
- * - Card Live Status Chips (Ready / Offline / Busy)
+ * - Card Live Status Chips ("Ready" / "Busy") & "Robot not connected" banner
+ * - Dynamic Rover Status Caption ("Connected" / "Not connected")
  * - Fixed STOP button event handling & state updates
  * ==============================================================================
  */
@@ -18,7 +19,7 @@ const ICONS = {
   wifiOff: `<svg class="lucide-icon-sm" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"/><path d="M16.85 11.25a10 10 0 0 1 2.22 1.68"/><path d="M5 13a10 10 0 0 1 5.24-2.76"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>`,
   stop: `<svg class="lucide-icon" viewBox="0 0 24 24"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>`,
   check: `<svg class="lucide-icon-sm" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>`,
-  droplets: `<svg class="lucide-icon-sm" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`
+  droplets: `<svg class="lucide-icon-sm" viewBox="0 0 24 24"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>`
 };
 
 const UI = {
@@ -34,7 +35,7 @@ const UI = {
     this.setupEmergencyStop();
     this.hookROSCallbacks();
 
-    // Initialize button states
+    // Initialize button & connection states
     this.updateOnlineStatus(false);
   },
 
@@ -72,6 +73,7 @@ const UI = {
     const cardSprinkling = document.getElementById("card-nav-sprinkling");
     if (cardSprinkling) {
       cardSprinkling.addEventListener("click", () => {
+        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
         this.navigateTo("sprinkling-screen");
       });
     }
@@ -79,6 +81,7 @@ const UI = {
     const cardPicking = document.getElementById("card-nav-picking");
     if (cardPicking) {
       cardPicking.addEventListener("click", () => {
+        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
         alert("Fruit Picking module will be enabled in the next phase.");
       });
     }
@@ -86,6 +89,7 @@ const UI = {
     const cardLogistics = document.getElementById("card-nav-logistics");
     if (cardLogistics) {
       cardLogistics.addEventListener("click", () => {
+        if (!this.isRobotOnline && !CONFIG.MOCK_MODE) return;
         alert("Logistics module will be enabled in the next phase.");
       });
     }
@@ -257,13 +261,15 @@ const UI = {
   },
 
   /**
-   * Update Status Pill, Live Status Chips and enable/disable action buttons
+   * Update Status Pill, Offline Banner, Rover Status text, Live Status Chips and enable/disable action buttons
    */
   updateOnlineStatus(isOnline) {
     this.isRobotOnline = isOnline;
     const pill = document.getElementById("robot-status-pill");
     const statusText = document.getElementById("robot-status-text");
     const statusIcon = document.getElementById("robot-status-icon");
+    const offlineBanner = document.getElementById("offline-banner");
+    const heroRoverStatus = document.getElementById("hero-rover-status");
     const btnSpray = document.getElementById("btn-trigger-spray");
     const actionCards = document.querySelectorAll(".action-card");
 
@@ -271,6 +277,7 @@ const UI = {
     const chipSprinkling = document.getElementById("chip-sprinkling");
     const chipLogistics = document.getElementById("chip-logistics");
 
+    // 1. Header Status Pill
     if (pill && statusText && statusIcon) {
       if (isOnline) {
         pill.className = "status-pill online";
@@ -283,28 +290,38 @@ const UI = {
       }
     }
 
-    // Update Live Status Chips on Cards
-    const statusChipClass = isOnline ? "live-status-chip chip-ready" : "live-status-chip chip-offline";
-    const statusChipLabel = isOnline ? "Ready" : "Offline";
-
-    if (chipPicking) {
-      chipPicking.className = statusChipClass;
-      chipPicking.innerText = statusChipLabel;
-    }
-    if (chipSprinkling) {
-      chipSprinkling.className = statusChipClass;
-      chipSprinkling.innerText = statusChipLabel;
-    }
-    if (chipLogistics) {
-      chipLogistics.className = statusChipClass;
-      chipLogistics.innerText = statusChipLabel;
+    // 2. Single "Robot not connected" banner under header
+    if (offlineBanner) {
+      offlineBanner.style.display = isOnline ? "none" : "flex";
     }
 
-    // Disable action buttons when robot is OFFLINE
-    if (btnSpray) {
-      btnSpray.disabled = !isOnline && !CONFIG.MOCK_MODE;
+    // 3. Rover Hero Card dynamic status: "Connected" when online, "Not connected" when offline
+    if (heroRoverStatus) {
+      heroRoverStatus.innerText = isOnline ? "Rover Status: Connected" : "Rover Status: Not connected";
     }
 
+    // 4. Update Live Status Chips on Cards:
+    // Only show "Ready" when online; hidden when offline
+    if (isOnline) {
+      if (chipPicking) {
+        chipPicking.className = "live-status-chip chip-ready";
+        chipPicking.innerText = "Ready";
+      }
+      if (chipSprinkling) {
+        chipSprinkling.className = "live-status-chip chip-ready";
+        chipSprinkling.innerText = "Ready";
+      }
+      if (chipLogistics) {
+        chipLogistics.className = "live-status-chip chip-ready";
+        chipLogistics.innerText = "Ready";
+      }
+    } else {
+      if (chipPicking) chipPicking.style.display = "none";
+      if (chipSprinkling) chipSprinkling.style.display = "none";
+      if (chipLogistics) chipLogistics.style.display = "none";
+    }
+
+    // 5. Disable/Dim action cards when offline
     actionCards.forEach((card) => {
       if (isOnline || CONFIG.MOCK_MODE) {
         card.classList.remove("disabled");
@@ -312,6 +329,11 @@ const UI = {
         card.classList.add("disabled");
       }
     });
+
+    // 6. Disable spray button if offline
+    if (btnSpray) {
+      btnSpray.disabled = !isOnline && !CONFIG.MOCK_MODE;
+    }
   }
 };
 
