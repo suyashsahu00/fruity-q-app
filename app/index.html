@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Fruity Q - Mobile Dashboard</title>
+  <title>Fruity Q - Mobile Control UI</title>
   
   <!-- Mobile & PWA Meta -->
   <meta name="theme-color" content="#F6F8F3">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="Fruity Q agricultural robot mobile controller">
+  <meta name="description" content="Fruity Q - Autonomous Orchard Rover Mobile Application">
 
-  <!-- Local Stylesheet (No CDN, fully offline) -->
+  <!-- Local Offline Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <!-- DEMO MODE BANNER (Visible when CONFIG.MOCK_MODE is ON) -->
   <div id="demo-banner">
-    <!-- Lucide: alert-octagon -->
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
     <span>DEMO MODE ACTIVE (Simulated Robot)</span>
   </div>
 
-  <!-- SPLASH SCREEN (1.8s CSS-only animation) -->
+  <!-- SPLASH SCREEN (1.8s CSS-only, once per session) -->
   <div id="splash-screen" aria-hidden="true">
     <div class="splash-content">
       <div class="splash-logo-wrapper">
@@ -45,14 +44,14 @@
     </div>
   </div>
 
-  <!-- MAIN VIEWPORT CONTAINER -->
+  <!-- MAIN 390x844 VIEWPORT CANVAS -->
   <div class="mobile-canvas">
 
-    <!-- APP HEADER (visible on Home screen) -->
+    <!-- APP HEADER (Primary, visible on Home screen) -->
     <header class="app-header" id="home-header">
       <div class="brand">
         <div class="fruit-q-mark">
-          <!-- Flower/Fruit brand logo mark -->
+          <!-- Flower/Fruit brand logo mark with accent dot -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M16 8a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8h-1a4 4 0 0 0-4 4Z"/><path d="M12 14a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0v-1a4 4 0 0 0-4-4Z"/><path d="M4 12a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8H8a4 4 0 0 0-4 4Z"/></svg>
           <span class="brand-accent-dot"></span>
         </div>
@@ -61,8 +60,7 @@
 
       <div class="header-right-group">
         <!-- Settings gear icon button -->
-        <button type="button" id="btn-open-settings" class="btn-icon-header" aria-label="Settings">
-          <!-- Lucide: settings -->
+        <button type="button" id="btn-open-settings" class="btn-icon-header" data-nav-target="settings-screen" aria-label="Settings">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
         <!-- Global Connection State Pill -->
@@ -74,17 +72,17 @@
     </header>
 
     <!-- ====================================================================
-         1. HOME SCREEN
+         1. DASHBOARD SCREEN (Orchard Overview)
          ==================================================================== -->
     <main id="home-screen" class="screen active">
       
-      <!-- Welcome and context -->
+      <!-- Welcome context -->
       <div class="welcome-context">
         <h2 class="greeting">Orchard overview</h2>
         <p class="context-text">Manage your rover and field operations</p>
       </div>
 
-      <!-- Rover Connection Card -->
+      <!-- Rover Connection Card (Dark Forest Green) -->
       <section class="rover-connection-card">
         <div class="rover-card-heading">
           <span class="eyebrow">ROVER CONNECTION</span>
@@ -121,9 +119,8 @@
       <div class="cards-container">
         
         <!-- 1. Fruit Picking Card -->
-        <div id="card-nav-picking" class="module-card locked" role="button" tabindex="0" aria-label="Open Fruit Picking">
+        <div id="card-nav-picking" class="module-card locked" data-nav-target="screen-picking-main" role="button" tabindex="0" aria-label="Open Fruit Picking">
           <div class="module-icon-container">
-            <!-- Lucide: apple -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
           </div>
           <div class="module-label-group">
@@ -137,9 +134,8 @@
         </div>
 
         <!-- 2. Sprinkling Card -->
-        <div id="card-nav-sprinkling" class="module-card locked" role="button" tabindex="0" aria-label="Open Sprinkling">
+        <div id="card-nav-sprinkling" class="module-card locked" data-nav-target="screen-sprinkling-main" role="button" tabindex="0" aria-label="Open Sprinkling">
           <div class="module-icon-container">
-            <!-- Lucide: droplets -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>
           </div>
           <div class="module-label-group">
@@ -153,9 +149,8 @@
         </div>
 
         <!-- 3. Logistics Card -->
-        <div id="card-nav-logistics" class="module-card locked" role="button" tabindex="0" aria-label="Open Logistics">
+        <div id="card-nav-logistics" class="module-card locked" data-nav-target="screen-logistics-ros" role="button" tabindex="0" aria-label="Open Logistics">
           <div class="module-icon-container">
-            <!-- Lucide: route -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
           </div>
           <div class="module-label-group">
@@ -179,154 +174,637 @@
     </main>
 
     <!-- ====================================================================
-         2. FRUIT PICKING SCREEN
+         2. FRUIT PICKING – MAIN SCREEN
          ==================================================================== -->
-    <main id="picking-screen" class="screen">
-      <!-- Sub-header: back arrow + title + status pill -->
+    <main id="screen-picking-main" class="screen">
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
-          <!-- Lucide: arrow-left -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="screen-title">Fruit Picking</h2>
-        <div class="sub-status-pill" id="picking-status-pill">
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Fruit Picking</h2>
+          <p class="screen-subtitle">Prepare the rover before harvesting</p>
+        </div>
+        <div class="sub-status-pill">
           <span class="status-dot"></span>
           <span class="sub-status-text">OFFLINE</span>
         </div>
       </div>
 
-      <!-- "Robot not connected" notice (shown when offline) -->
-      <div class="offline-notice" id="picking-offline-notice">
-        <!-- Lucide: wifi-off -->
+      <!-- Offline Notice -->
+      <div class="offline-notice">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
         <span>Robot not connected — actions disabled</span>
       </div>
 
-      <!-- State A: Pre-start Checklist Panel -->
-      <section class="screen-card-panel" id="checklist-panel">
-        <div class="operations-title">PRE-START SAFETY CHECKLIST</div>
+      <!-- REQUIRED INSTRUCTIONS CARD -->
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">REQUIRED INSTRUCTIONS</span>
+          <span class="badge-tag">SAFETY FIRST</span>
+        </div>
+        <h3 class="panel-heading">Robot Movement Instructions</h3>
+        <p class="panel-desc">Review these critical safety rules before moving the robotic arm:</p>
+        
+        <div class="compact-steps-list">
+          <div class="compact-step-item">
+            <span class="step-num-bubble">1</span>
+            <span class="step-text">Make sure the work area is clear.</span>
+          </div>
+          <div class="compact-step-item">
+            <span class="step-num-bubble">2</span>
+            <span class="step-text">Confirm that no person is inside the robotic arm movement area.</span>
+          </div>
+          <div class="compact-step-item">
+            <span class="step-num-bubble">3</span>
+            <span class="step-text">Check that the robotic hand has enough clearance from branches.</span>
+          </div>
+          <div class="compact-step-item">
+            <span class="step-num-bubble">4</span>
+            <span class="step-text">Begin with small movements before using a larger range.</span>
+          </div>
+          <div class="compact-step-item">
+            <span class="step-num-bubble">5</span>
+            <span class="step-text">Stop immediately if unexpected resistance or movement occurs.</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-action-secondary" data-nav-target="screen-picking-instructions">
+          <span>VIEW FULL PROTOCOL CHECKLIST</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </section>
+
+      <!-- OPERATIONS SECTION -->
+      <div class="operations-section-heading">
+        <span class="operations-title">HARVESTING OPERATIONS</span>
+        <span class="module-count">03 MODES</span>
+      </div>
+
+      <div class="cards-container">
+        <!-- 1. Auto Calibration Option Card -->
+        <div class="module-card" data-nav-target="screen-picking-calibration" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Automatic Calibration</h3>
+            <p class="module-description">Whole robotic arm calibrates automatically before harvesting</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">CALIBRATION READY</span>
+          </span>
+        </div>
+
+        <!-- 2. Manual Movement Option Card -->
+        <div class="module-card" data-nav-target="screen-picking-manual" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Manual Movement</h3>
+            <p class="module-description">Control robotic hand on X and Y axes with precision step sizes</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">GANTRY XY</span>
+          </span>
+        </div>
+
+        <!-- 3. Automatic Picking Option Card -->
+        <div class="module-card" data-nav-target="screen-picking-automatic" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12a8 8 0 0 1-8 8"/><path d="M12 20a8 8 0 0 1-8-8"/><path d="M4 12a8 8 0 0 1 8-8"/><path d="M12 4a8 8 0 0 1 8 8"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Automatic Picking</h3>
+            <p class="module-description">Camera object detection, target coordinates &amp; robotic harvesting</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">AI VISION</span>
+          </span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ====================================================================
+         3. FRUIT PICKING – INSTRUCTIONS SCREEN
+         ==================================================================== -->
+    <main id="screen-picking-instructions" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-picking-main" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Movement Instructions</h2>
+          <p class="screen-subtitle">Mandatory safety protocol for robotic arm</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- Warning Card -->
+      <div class="notice-card warning">
+        <div class="notice-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+        </div>
+        <div class="notice-content">
+          <span class="notice-title">Operator Safety Mandate</span>
+          <p class="notice-text">Robotic actuators operate at high torque. Acknowledge all 5 safety requirements before beginning movements.</p>
+        </div>
+      </div>
+
+      <!-- Detailed 5-Step Checklist -->
+      <div class="instruction-steps-container">
+        <!-- Step 1 -->
+        <label class="instruction-step-card">
+          <div class="instruction-step-header">
+            <span class="step-badge">STEP 1</span>
+            <input type="checkbox" class="instruction-checkbox" id="instr-step-1">
+          </div>
+          <h4 class="instruction-step-title">1. Make sure the work area is clear.</h4>
+          <p class="instruction-step-desc">Inspect ground terrain, remove loose crates, harvest buckets, and irrigation hoses from the rover's turning footprint.</p>
+        </label>
+
+        <!-- Step 2 -->
+        <label class="instruction-step-card">
+          <div class="instruction-step-header">
+            <span class="step-badge">STEP 2</span>
+            <input type="checkbox" class="instruction-checkbox" id="instr-step-2">
+          </div>
+          <h4 class="instruction-step-title">2. Confirm that no person is inside the robotic arm movement area.</h4>
+          <p class="instruction-step-desc">Establish and enforce a strict 2-meter perimeter. All field personnel must remain outside the manipulator reach envelope.</p>
+        </label>
+
+        <!-- Step 3 -->
+        <label class="instruction-step-card">
+          <div class="instruction-step-header">
+            <span class="step-badge">STEP 3</span>
+            <input type="checkbox" class="instruction-checkbox" id="instr-step-3">
+          </div>
+          <h4 class="instruction-step-title">3. Check that the robotic hand has enough clearance from branches.</h4>
+          <p class="instruction-step-desc">Verify that end-effector grippers, cutting blades, and depth cameras have minimum 10 cm clearance from thick support branches.</p>
+        </label>
+
+        <!-- Step 4 -->
+        <label class="instruction-step-card">
+          <div class="instruction-step-header">
+            <span class="step-badge">STEP 4</span>
+            <input type="checkbox" class="instruction-checkbox" id="instr-step-4">
+          </div>
+          <h4 class="instruction-step-title">4. Begin with small movements before using a larger range.</h4>
+          <p class="instruction-step-desc">Always execute low-speed test increments (Small 5 mm) on single axes prior to broad Cartesian translations.</p>
+        </label>
+
+        <!-- Step 5 -->
+        <label class="instruction-step-card">
+          <div class="instruction-step-header">
+            <span class="step-badge">STEP 5</span>
+            <input type="checkbox" class="instruction-checkbox" id="instr-step-5">
+          </div>
+          <h4 class="instruction-step-title">5. Stop immediately if unexpected resistance or movement occurs.</h4>
+          <p class="instruction-step-desc">Use the dedicated red SOFT STOP on screen or the physical mushroom E-Stop button on the rover frame instantly.</p>
+        </label>
+      </div>
+
+      <button type="button" class="btn-action-primary" id="btn-proceed-from-instructions" data-nav-target="screen-picking-calibration" disabled>
+        <span>ACKNOWLEDGE &amp; PROCEED TO CALIBRATION</span>
+      </button>
+    </main>
+
+    <!-- ====================================================================
+         4. FRUIT PICKING – CALIBRATION SCREEN
+         ==================================================================== -->
+    <main id="screen-picking-calibration" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-picking-main" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Full Arm Calibration</h2>
+          <p class="screen-subtitle">Reference position &amp; safe starting position</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- Calibration Summary Card -->
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">CALIBRATION PROTOCOL</span>
+          <span class="status-badge ready" id="arm-calib-status-badge">CALIBRATION READY</span>
+        </div>
+        <h3 class="panel-heading">Full Arm Calibration</h3>
+        <p class="panel-desc">
+          The rover automatically checks the reference position, movement range and safe starting position of the robotic arm.
+        </p>
+
+        <!-- Pre-calibration checklist -->
+        <div class="operations-title" style="margin-top: 0.5rem;">PRE-CALIBRATION CHECKLIST</div>
         <div class="checklist-container">
           <label class="checklist-item">
-            <input type="checkbox" id="check-gripper" class="safety-check">
-            <span class="checklist-label">Gripper clear &amp; homed</span>
+            <input type="checkbox" class="arm-calib-check" id="calib-check-hand">
+            <span class="checklist-label">Keep the robotic hand clear of fruit and branches</span>
           </label>
           <label class="checklist-item">
-            <input type="checkbox" id="check-area" class="safety-check">
-            <span class="checklist-label">Area clear of people</span>
+            <input type="checkbox" class="arm-calib-check" id="calib-check-zone">
+            <span class="checklist-label">Ensure no person is inside the movement zone</span>
           </label>
           <label class="checklist-item">
-            <input type="checkbox" id="check-battery" class="safety-check">
-            <span class="checklist-label">Battery level OK (&gt;25%)</span>
+            <input type="checkbox" class="arm-calib-check" id="calib-check-stable">
+            <span class="checklist-label">Confirm the rover is stable</span>
           </label>
           <label class="checklist-item">
-            <input type="checkbox" id="check-camera" class="safety-check">
-            <span class="checklist-label">Camera feed &amp; depth OK</span>
+            <input type="checkbox" class="arm-calib-check" id="calib-check-pos">
+            <span class="checklist-label">Move the arm to the safe starting position</span>
           </label>
         </div>
 
-        <button type="button" id="btn-start-picking" class="btn-action-primary" disabled>
-          <!-- Lucide: play -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-          <span>START PICKING</span>
+        <button type="button" id="btn-start-arm-calib" class="btn-action-primary" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <span>START AUTO CALIBRATION</span>
         </button>
       </section>
 
-      <!-- State B: Live Status-Driven Step Tracker Panel -->
-      <section class="screen-card-panel" id="tracker-panel" style="display: none;">
-        <div class="operations-title">HARVESTING PROGRESS</div>
+      <!-- Active Progress Box (shown while calibrating) -->
+      <section class="screen-card-panel" id="arm-calib-progress-card" style="display: none;">
+        <div class="panel-header-row">
+          <span class="operations-title">CALIBRATION PROGRESS</span>
+          <span class="progress-pct-label" id="arm-calib-pct">80%</span>
+        </div>
         
-        <div class="tracker-status-box">
-          <div class="tracker-headline">
-            <span class="context-text">Current State:</span>
-            <span class="tracker-live-label" id="live-pick-status">Waiting for robot</span>
-          </div>
-
-          <!-- 5 Steps: Searching -> Aligned -> Gripping -> Cutting -> Picked -->
-          <div class="step-progress-row">
-            <div class="step-node" id="step-node-Searching">
-              <span class="step-dot">1</span>
-              <span class="step-label">Search</span>
-            </div>
-            <div class="step-node" id="step-node-Aligned">
-              <span class="step-dot">2</span>
-              <span class="step-label">Align</span>
-            </div>
-            <div class="step-node" id="step-node-Gripping">
-              <span class="step-dot">3</span>
-              <span class="step-label">Grip</span>
-            </div>
-            <div class="step-node" id="step-node-Cutting">
-              <span class="step-dot">4</span>
-              <span class="step-label">Cut</span>
-            </div>
-            <div class="step-node" id="step-node-Picked">
-              <span class="step-dot">5</span>
-              <span class="step-label">Picked</span>
-            </div>
-          </div>
-
-          <!-- Optional fruit distance (shown only if PICKING.DISTANCE_TOPIC is configured) -->
-          <div class="fruit-distance-row" id="fruit-distance-row" style="display:none;">
-            <span class="context-text">Fruit distance:</span>
-            <span class="distance-value" id="fruit-distance-value">—</span>
-          </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="arm-calib-bar" style="width: 80%;"></div>
         </div>
 
-        <button type="button" id="btn-cancel-picking" class="btn-action-cancel">
-          <!-- Lucide: x-circle -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></svg>
-          <span>CANCEL HARVEST</span>
-        </button>
+        <div class="calib-step-indicator">
+          <span class="calib-step-sub">Current step:</span>
+          <span class="calib-step-active" id="arm-calib-step-text">Checking Y-axis movement range</span>
+        </div>
+
+        <!-- 4 Sub-step nodes -->
+        <div class="step-progress-row">
+          <div class="step-node completed" id="calib-node-1">
+            <span class="step-dot">1</span>
+            <span class="step-label">Reference</span>
+          </div>
+          <div class="step-node completed" id="calib-node-2">
+            <span class="step-dot">2</span>
+            <span class="step-label">X-Axis</span>
+          </div>
+          <div class="step-node active" id="calib-node-3">
+            <span class="step-dot">3</span>
+            <span class="step-label">Y-Axis</span>
+          </div>
+          <div class="step-node" id="calib-node-4">
+            <span class="step-dot">4</span>
+            <span class="step-label">Home</span>
+          </div>
+        </div>
       </section>
 
-      <!-- State C: Result Panel (shown after Picked or Timed Out) -->
-      <section class="screen-card-panel" id="result-panel" style="display: none;">
-        <div class="result-icon-area" id="result-icon-area">
-          <!-- Icon changes: check or x -->
-        </div>
-        <div class="result-headline" id="result-headline">Picked ✓</div>
-        <div class="result-session-counter">
-          Picked this session: <strong id="session-pick-count">0</strong>
+      <!-- Completed Success Box (shown when finished) -->
+      <section class="screen-card-panel" id="arm-calib-success-card" style="display: none;">
+        <div class="notice-card success">
+          <div class="notice-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="notice-content">
+            <span class="notice-title">Arm Calibration Complete</span>
+            <p class="notice-text">Robotic hand reference zeroed and safe limits locked. Ready for operations.</p>
+          </div>
         </div>
 
-        <div class="result-actions">
-          <button type="button" id="btn-pick-another" class="btn-action-primary">
-            <!-- Lucide: apple -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
-            <span>PICK ANOTHER</span>
+        <div class="button-row">
+          <button type="button" class="btn-action-primary" data-nav-target="screen-picking-automatic">
+            <span>AUTOMATIC PICKING</span>
           </button>
-          <button type="button" id="btn-back-home-result" class="btn-action-secondary">
-            <!-- Lucide: arrow-left -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-            <span>BACK TO HOME</span>
+          <button type="button" class="btn-action-secondary" data-nav-target="screen-picking-manual">
+            <span>MANUAL XY</span>
           </button>
         </div>
       </section>
     </main>
 
     <!-- ====================================================================
-         3. SPRINKLING SCREEN
+         5. FRUIT PICKING – MANUAL MOVEMENT SCREEN
          ==================================================================== -->
-    <main id="sprinkling-screen" class="screen">
+    <main id="screen-picking-manual" class="screen">
       <div class="screen-sub-header">
-        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
+        <button type="button" class="btn-back" data-target="screen-picking-main" aria-label="Go Back">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="screen-title">Sprinkling Control</h2>
-        <div class="sub-status-pill" id="sprinkling-status-pill">
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Manual Movement</h2>
+          <p class="screen-subtitle">Control the robotic hand on the X and Y axes</p>
+        </div>
+        <div class="sub-status-pill">
           <span class="status-dot"></span>
           <span class="sub-status-text">OFFLINE</span>
         </div>
       </div>
 
-      <!-- "Robot not connected" notice -->
-      <div class="offline-notice" id="sprinkling-offline-notice">
+      <!-- Warning note -->
+      <div class="notice-card warning">
+        <div class="notice-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+        </div>
+        <div class="notice-content">
+          <span class="notice-title">Proximity Caution</span>
+          <p class="notice-text">Use small movements when operating close to fruit or branches.</p>
+        </div>
+      </div>
+
+      <!-- Industrial Robotic Control Area (Gantry Interface) -->
+      <section class="screen-card-panel gantry-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">GANTRY COORDINATES</span>
+          <span class="telemetry-pill" id="gantry-coords-readout">X: 0.0 mm | Y: 0.0 mm</span>
+        </div>
+
+        <!-- Visual Gantry Schematic -->
+        <div class="gantry-schematic-view">
+          <div class="gantry-axis-indicator y-plus">
+            <span>Y+</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
+          </div>
+          
+          <div class="gantry-middle-row">
+            <div class="gantry-axis-indicator x-minus">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+              <span>X−</span>
+            </div>
+            
+            <div class="gantry-crosshair-track">
+              <div class="gantry-hand-block" id="gantry-hand-display">
+                <span class="hand-label">[ ROBOT HAND ]</span>
+                <span class="hand-pos-sub" id="gantry-hand-pos-sub">(0, 0)</span>
+              </div>
+            </div>
+
+            <div class="gantry-axis-indicator x-plus">
+              <span>X+</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+          </div>
+
+          <div class="gantry-axis-indicator y-minus">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            <span>Y−</span>
+          </div>
+        </div>
+
+        <!-- 4 Large Directional Machine Controls -->
+        <div class="gantry-control-pad">
+          <!-- UP (Y+) -->
+          <button type="button" class="btn-gantry-move" id="btn-gantry-up" data-axis="y" data-dir="1" aria-label="Move Up Y Plus">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            <span class="gantry-btn-label">↑ MOVE UP (Y+)</span>
+          </button>
+
+          <!-- Middle Row: Left (X-) & Right (X+) -->
+          <div class="gantry-pad-row">
+            <button type="button" class="btn-gantry-move" id="btn-gantry-left" data-axis="x" data-dir="-1" aria-label="Move Left X Minus">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <span class="gantry-btn-label">← MOVE LEFT (X−)</span>
+            </button>
+
+            <button type="button" class="btn-gantry-move" id="btn-gantry-right" data-axis="x" data-dir="1" aria-label="Move Right X Plus">
+              <span class="gantry-btn-label">MOVE RIGHT (X+) →</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <!-- DOWN (Y-) -->
+          <button type="button" class="btn-gantry-move" id="btn-gantry-down" data-axis="y" data-dir="-1" aria-label="Move Down Y Minus">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <span class="gantry-btn-label">↓ MOVE DOWN (Y−)</span>
+          </button>
+        </div>
+
+        <!-- Movement Step Size Selector -->
+        <div class="speed-selector-row" style="margin-top: 0.5rem;">
+          <span class="operations-title" style="margin-bottom:0;">MOVEMENT STEP SIZE</span>
+          <div class="speed-chips">
+            <button type="button" class="btn-speed selected" data-step-val="5">Small (5mm)</button>
+            <button type="button" class="btn-speed" data-step-val="15">Medium (15mm)</button>
+            <button type="button" class="btn-speed" data-step-val="50">Large (50mm)</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn-action-secondary" id="btn-gantry-zero" style="margin-top: 0.25rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>RETURN TO HOME (0, 0)</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         6. FRUIT PICKING – AUTOMATIC PICKING SCREEN
+         ==================================================================== -->
+    <main id="screen-picking-automatic" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-picking-main" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Automatic Picking</h2>
+          <p class="screen-subtitle">Detect fruit and send target information to the rover</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- Flow Pipeline Tracker -->
+      <div class="auto-pipeline-row">
+        <span class="pipeline-node active" id="pipe-1">1. CAMERA</span>
+        <span class="pipeline-sep">→</span>
+        <span class="pipeline-node active" id="pipe-2">2. IDENTIFIED</span>
+        <span class="pipeline-sep">→</span>
+        <span class="pipeline-node" id="pipe-3">3. TARGET</span>
+        <span class="pipeline-sep">→</span>
+        <span class="pipeline-node" id="pipe-4">4. SEND</span>
+      </div>
+
+      <!-- Camera Detection Area -->
+      <section class="screen-card-panel vision-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">CAMERA DETECTION FEED</span>
+          <span class="telemetry-pill live">LIVE · 30 FPS</span>
+        </div>
+
+        <div class="camera-viewfinder-box">
+          <div class="viewfinder-grid"></div>
+          
+          <!-- Bounding box overlay for detected object -->
+          <div class="vision-target-box" id="vision-bounding-box">
+            <span class="target-tag" id="vision-tag-label">Tomato · 94%</span>
+            <div class="target-crosshair"></div>
+          </div>
+
+          <div class="viewfinder-footer">
+            <span>RGB-D Depth Stream: 0.32m</span>
+            <span>Sensor: Realsense D435</span>
+          </div>
+        </div>
+
+        <!-- Sample Fruit Categories (Selectable Cards with clean vector icons) -->
+        <div class="operations-title" style="margin-top: 0.25rem;">SELECT TARGET FRUIT CATEGORY</div>
+        <div class="fruit-categories-grid">
+          
+          <!-- Tomato Card -->
+          <div class="fruit-choice-card selected" data-fruit="Tomato" data-conf="94" data-x="124" data-y="86" role="button" tabindex="0">
+            <div class="fruit-icon-wrap tomato">
+              <!-- Professional Tomato vector icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5V2"/><path d="M9 4.5c1 1 2 1.5 3 1.5s2-.5 3-1.5"/><path d="M7 7c1.5.5 3 .5 5 0 2 .5 3.5.5 5 0"/></svg>
+            </div>
+            <span class="fruit-name">Tomato</span>
+            <span class="fruit-sub">94% Confidence</span>
+          </div>
+
+          <!-- Cucumber Card -->
+          <div class="fruit-choice-card" data-fruit="Cucumber" data-conf="91" data-x="98" data-y="142" role="button" tabindex="0">
+            <div class="fruit-icon-wrap cucumber">
+              <!-- Professional Cucumber vector icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="8" x="3" y="8" rx="4" transform="rotate(-30 12 12)"/><path d="m8 10 1 1"/><path d="m14 13 1 1"/><path d="m11 15 1 1"/></svg>
+            </div>
+            <span class="fruit-name">Cucumber</span>
+            <span class="fruit-sub">91% Confidence</span>
+          </div>
+
+          <!-- Apple Card -->
+          <div class="fruit-choice-card" data-fruit="Apple" data-conf="96" data-x="160" data-y="110" role="button" tabindex="0">
+            <div class="fruit-icon-wrap apple">
+              <!-- Professional Apple vector icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
+            </div>
+            <span class="fruit-name">Apple</span>
+            <span class="fruit-sub">96% Confidence</span>
+          </div>
+        </div>
+
+        <!-- Detection Information Table -->
+        <div class="detection-info-card">
+          <div class="info-metric-row">
+            <span class="metric-label">Detected Object:</span>
+            <span class="metric-val" id="det-fruit-name">Tomato</span>
+          </div>
+          <div class="info-metric-row">
+            <span class="metric-label">Confidence:</span>
+            <span class="metric-val" id="det-fruit-conf">94%</span>
+          </div>
+          <div class="info-metric-row">
+            <span class="metric-label">Target Position:</span>
+            <span class="metric-val highlight" id="det-fruit-pos">X: 124 mm · Y: 86 mm</span>
+          </div>
+        </div>
+
+        <!-- Primary Trigger Button -->
+        <button type="button" class="btn-action-primary" id="btn-detect-send-target">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span>DETECT &amp; SEND TARGET</span>
+        </button>
+
+        <!-- Status state feedback -->
+        <div class="status-callout" id="target-send-status">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span id="target-send-status-text">Target locked. Press button to transmit coordinates.</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         7. SPRINKLING – MAIN SCREEN
+         ==================================================================== -->
+    <main id="screen-sprinkling-main" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Sprinkling</h2>
+          <p class="screen-subtitle">Prepare safe precision spraying</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- Offline Notice -->
+      <div class="offline-notice">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
         <span>Robot not connected — actions disabled</span>
       </div>
 
-      <div class="screen-card-panel">
-        <div class="operations-title">SELECT SPRAY DURATION</div>
+      <!-- Sprinkling Operations Menu -->
+      <div class="operations-section-heading">
+        <span class="operations-title">SPRAYING WORKFLOW</span>
+        <span class="module-count">03 STAGES</span>
+      </div>
+
+      <div class="cards-container">
+        <!-- 1. Calibration Card -->
+        <div class="module-card" data-nav-target="screen-sprinkling-calibration" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Automatic Calibration</h3>
+            <p class="module-description">Calibrate spray mechanism &amp; verify system before spraying</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">READY</span>
+          </span>
+        </div>
+
+        <!-- 2. Anomaly Detection Card -->
+        <div class="module-card" data-nav-target="screen-sprinkling-anomaly" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Anomaly Detection</h3>
+            <p class="module-description">Safety check: scan for personnel &amp; non-target obstacles</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">SAFETY CHECK</span>
+          </span>
+        </div>
+
+        <!-- 3. Bucket Selection Card -->
+        <div class="module-card" data-nav-target="screen-sprinkling-buckets" role="button" tabindex="0">
+          <div class="module-icon-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>
+          </div>
+          <div class="module-label-group">
+            <h3 class="module-title">Select Bucket</h3>
+            <p class="module-description">Choose active spray profile or configure custom formulation</p>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label" id="main-active-bucket-tag">BUCKET 01</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Spray Trigger Panel (Capped in config.js) -->
+      <section class="screen-card-panel" style="margin-top: 0.5rem;">
+        <div class="panel-header-row">
+          <span class="operations-title">SPRAY DURATION (HARD CAP: 5s)</span>
+          <span class="badge-tag">SAFETY CAPPED</span>
+        </div>
+        
         <div id="duration-selector-container" class="duration-selector"></div>
 
         <!-- Countdown Ring (shown while spraying) -->
@@ -338,44 +816,460 @@
           <span class="spray-countdown-number" id="spray-countdown-number">5</span>
         </div>
 
-        <!-- Feedback callout -->
         <div id="spray-feedback" class="status-callout">
-          <!-- Lucide: droplets -->
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
           <span id="spray-feedback-text">Ready to spray</span>
         </div>
 
         <button type="button" id="btn-trigger-spray" class="btn-action-primary">
-          <!-- Lucide: droplets -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>
           <span>TRIGGER SPRAY</span>
         </button>
-      </div>
+      </section>
     </main>
 
     <!-- ====================================================================
-         4. LOGISTICS SCREEN
+         8. SPRINKLING – CALIBRATION SCREEN
          ==================================================================== -->
-    <main id="logistics-screen" class="screen">
+    <main id="screen-sprinkling-calibration" class="screen">
       <div class="screen-sub-header">
-        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
+        <button type="button" class="btn-back" data-target="screen-sprinkling-main" aria-label="Go Back">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="screen-title">Logistics Control</h2>
-        <div class="sub-status-pill" id="logistics-status-pill">
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Sprinkling Calibration</h2>
+          <p class="screen-subtitle">Verify nozzle pressure &amp; bucket seal</p>
+        </div>
+        <div class="sub-status-pill">
           <span class="status-dot"></span>
           <span class="sub-status-text">OFFLINE</span>
         </div>
       </div>
 
-      <!-- "Robot not connected" notice -->
-      <div class="offline-notice" id="logistics-offline-notice">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-        <span>Robot not connected — actions disabled</span>
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">CALIBRATION PRE-CHECK</span>
+          <span class="status-badge ready" id="spray-calib-status-badge">SYSTEM READY</span>
+        </div>
+        <h3 class="panel-heading">Automatic Spray Calibration</h3>
+        <p class="panel-desc">
+          Calibrate the spray mechanism and verify the fluid system before spraying.
+        </p>
+
+        <!-- 3 required checkmarks -->
+        <div class="checklist-container">
+          <label class="checklist-item">
+            <input type="checkbox" class="spray-calib-check" id="sc-check-ready" checked>
+            <span class="checklist-label">Spray system ready</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" class="spray-calib-check" id="sc-check-nozzle" checked>
+            <span class="checklist-label">Nozzle position checked</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" class="spray-calib-check" id="sc-check-bucket" checked>
+            <span class="checklist-label">Bucket connection checked</span>
+          </label>
+        </div>
+
+        <button type="button" id="btn-start-spray-calib" class="btn-action-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          <span>START CALIBRATION</span>
+        </button>
+      </section>
+
+      <!-- Spray Calibration Progress Section -->
+      <section class="screen-card-panel" id="spray-calib-progress-card" style="display: none;">
+        <div class="panel-header-row">
+          <span class="operations-title">SYSTEM DIAGNOSTICS</span>
+          <span class="progress-pct-label" id="spray-calib-pct">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="spray-calib-bar" style="width: 0%;"></div>
+        </div>
+        <div class="calib-step-indicator">
+          <span class="calib-step-sub">Active Phase:</span>
+          <span class="calib-step-active" id="spray-calib-step-text">Testing fluid solenoid...</span>
+        </div>
+      </section>
+
+      <!-- Spray Calibration Success Section -->
+      <section class="screen-card-panel" id="spray-calib-success-card" style="display: none;">
+        <div class="notice-card success">
+          <div class="notice-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="notice-content">
+            <span class="notice-title">Spray Calibration Complete</span>
+            <p class="notice-text">Solenoids primed, nozzle pattern verified at 2.4 bar pressure.</p>
+          </div>
+        </div>
+        <button type="button" class="btn-action-primary" data-nav-target="screen-sprinkling-anomaly">
+          <span>PROCEED TO SAFETY CHECK</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         9. SPRINKLING – ANOMALY DETECTION (SAFETY CHECK) SCREEN
+         ==================================================================== -->
+    <main id="screen-sprinkling-anomaly" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-sprinkling-main" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Safety Check</h2>
+          <p class="screen-subtitle">Detect obstacles before spraying</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
       </div>
 
-      <div class="screen-card-panel">
-        <!-- Follow-me Toggle -->
+      <!-- Detection Simulation Controls (For Operator Demo) -->
+      <div class="sim-toggle-row">
+        <span class="operations-title" style="margin-bottom:0;">SCANNER TEST SIMULATION:</span>
+        <div class="speed-chips">
+          <button type="button" class="btn-speed selected" id="btn-sim-obstacle">Obstacle</button>
+          <button type="button" class="btn-speed" id="btn-sim-clear">Clear</button>
+        </div>
+      </div>
+
+      <!-- Camera / Detection Area Frame -->
+      <section class="screen-card-panel vision-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">ORCHARD SPRAY ZONE SCAN</span>
+          <span class="telemetry-pill live">RADAR ACTIVE</span>
+        </div>
+
+        <div class="camera-viewfinder-box anomaly-box">
+          <div class="scanner-sweep-beam"></div>
+
+          <!-- Obstacle markers -->
+          <div class="anomaly-target-overlay" id="anomaly-overlay-person">
+            <div class="anomaly-icon-badge person">
+              <!-- Person icon -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="anomaly-tag-bubble red">👤 Person Detected (1.8m)</span>
+          </div>
+
+          <div class="viewfinder-footer">
+            <span id="scan-classified-readout">Target: Person (High Probability)</span>
+            <span>Angle: +22° East</span>
+          </div>
+        </div>
+
+        <!-- Result State: YES - STOP SPRAYING -->
+        <div id="anomaly-result-detected" class="anomaly-result-card danger">
+          <div class="panel-header-row">
+            <span class="operations-title" style="color: #C7211F;">ANOMALY DETECTED</span>
+            <span class="status-badge stop">● YES — STOP SPRAYING</span>
+          </div>
+          <div class="anomaly-details-grid">
+            <div class="detail-pair">
+              <span class="pair-key">Detected Type:</span>
+              <strong class="pair-val">👤 Person</strong>
+            </div>
+            <div class="detail-pair">
+              <span class="pair-key">Range / Safety:</span>
+              <strong class="pair-val">Inside 3m Spray Arc</strong>
+            </div>
+          </div>
+          <div class="notice-card warning" style="margin: 0.5rem 0;">
+            <div class="notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></div>
+            <div class="notice-content">
+              <span class="notice-title">Spraying Disabled</span>
+              <p class="notice-text">Spraying is disabled until the area is clear.</p>
+            </div>
+          </div>
+          <button type="button" class="btn-action-cancel" id="btn-stop-review-area">
+            <span>STOP &amp; REVIEW AREA</span>
+          </button>
+        </div>
+
+        <!-- Result State: NO - AREA CLEAR -->
+        <div id="anomaly-result-clear" class="anomaly-result-card success" style="display: none;">
+          <div class="panel-header-row">
+            <span class="operations-title" style="color: #137333;">SURROUNDINGS SCAN</span>
+            <span class="status-badge ready">● NO — AREA CLEAR</span>
+          </div>
+          <div class="notice-card success" style="margin: 0.5rem 0;">
+            <div class="notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="notice-content">
+              <span class="notice-title">AREA CLEAR</span>
+              <p class="notice-text">No people or non-target plants detected in the perimeter.</p>
+            </div>
+          </div>
+          <button type="button" class="btn-action-primary" data-nav-target="screen-sprinkling-buckets">
+            <span>CONTINUE TO BUCKET SELECTION</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         10. SPRINKLING – BUCKET SELECTION SCREEN
+         ==================================================================== -->
+    <main id="screen-sprinkling-buckets" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-sprinkling-main" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Select Bucket</h2>
+          <p class="screen-subtitle">Choose the active spray profile</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- Configurable Profile Cards -->
+      <div class="operations-section-heading">
+        <span class="operations-title">CONFIGURABLE SPRAY PROFILES</span>
+        <span class="module-count">OPERATOR VERIFIED</span>
+      </div>
+
+      <div class="bucket-cards-stack">
+        <!-- Bucket 01 Card -->
+        <div class="bucket-card selected" data-bucket="Bucket 01" data-chem="Copper-based profile" role="button" tabindex="0">
+          <div class="bucket-radio-circle"></div>
+          <div class="bucket-info-group">
+            <span class="bucket-eyebrow">BUCKET 01</span>
+            <h4 class="bucket-title">Copper-based profile</h4>
+            <span class="bucket-desc">Fungicide protection · Standard Orchard Mix</span>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">READY</span>
+          </span>
+        </div>
+
+        <!-- Bucket 02 Card -->
+        <div class="bucket-card" data-bucket="Bucket 02" data-chem="Spinosad profile" role="button" tabindex="0">
+          <div class="bucket-radio-circle"></div>
+          <div class="bucket-info-group">
+            <span class="bucket-eyebrow">BUCKET 02</span>
+            <h4 class="bucket-title">Spinosad profile</h4>
+            <span class="bucket-desc">Targeted bio-insecticide · Organic Approved</span>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">READY</span>
+          </span>
+        </div>
+
+        <!-- Bucket 03 Card -->
+        <div class="bucket-card" data-bucket="Bucket 03" data-chem="Mancozeb profile" role="button" tabindex="0">
+          <div class="bucket-radio-circle"></div>
+          <div class="bucket-info-group">
+            <span class="bucket-eyebrow">BUCKET 03</span>
+            <h4 class="bucket-title">Mancozeb profile</h4>
+            <span class="bucket-desc">Broad-spectrum foliar · Protective coverage</span>
+          </div>
+          <span class="module-badge ready">
+            <span class="dot"></span>
+            <span class="badge-label">READY</span>
+          </span>
+        </div>
+
+        <!-- UNKNOWN PROFILE CARD -->
+        <div class="bucket-card unknown-profile-card" id="bucket-unknown-card">
+          <div class="bucket-info-group">
+            <span class="bucket-eyebrow" style="color: #B06E1A;">CUSTOM CONFIGURATION</span>
+            <h4 class="bucket-title" id="unknown-profile-title">UNKNOWN PROFILE</h4>
+            <span class="bucket-desc" id="unknown-profile-desc">Create or edit a custom operator-approved profile</span>
+          </div>
+          <button type="button" class="btn-edit-badge" data-nav-target="screen-sprinkling-profile-editor">
+            <span>EDIT</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Regulatory Warning Card -->
+      <div class="notice-card warning">
+        <div class="notice-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+        </div>
+        <div class="notice-content">
+          <span class="notice-title">Compliance Warning</span>
+          <p class="notice-text">Always verify the product label, approved crop use, concentration and local regulations before operation.</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-action-primary" id="btn-confirm-active-bucket" data-nav-target="screen-sprinkling-main">
+        <span>CONFIRM ACTIVE BUCKET PROFILE</span>
+      </button>
+    </main>
+
+    <!-- ====================================================================
+         11. SPRINKLING – UNKNOWN PROFILE EDITOR SCREEN
+         ==================================================================== -->
+    <main id="screen-sprinkling-profile-editor" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="screen-sprinkling-buckets" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Edit Unknown Profile</h2>
+          <p class="screen-subtitle">Human-reviewed custom configuration</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">OPERATOR SPECIFICATION FORM</span>
+          <span class="badge-tag">MANUAL INPUT</span>
+        </div>
+        <p class="panel-desc">All values must be manually entered and verified against chemical container label.</p>
+
+        <!-- Form fields -->
+        <div class="settings-field-group">
+          <label class="settings-label" for="prof-name">Profile Name</label>
+          <input type="text" id="prof-name" class="settings-input" placeholder="e.g. Kaolin Clay Canopy Shield" value="Custom Operator Formulation">
+        </div>
+
+        <div class="field-split-row">
+          <div class="settings-field-group" style="flex:1;">
+            <label class="settings-label" for="prof-temp">Solution Temperature</label>
+            <input type="text" id="prof-temp" class="settings-input" placeholder="e.g. 20°C" value="21°C">
+          </div>
+          <div class="settings-field-group" style="flex:1;">
+            <label class="settings-label" for="prof-conc">Concentration</label>
+            <input type="text" id="prof-conc" class="settings-input" placeholder="e.g. 2.5 g/L" value="1.8 g/L">
+          </div>
+        </div>
+
+        <div class="field-split-row">
+          <div class="settings-field-group" style="flex:1;">
+            <label class="settings-label" for="prof-qty">Quantity</label>
+            <input type="number" id="prof-qty" class="settings-input" placeholder="500" value="500">
+          </div>
+          <div class="settings-field-group" style="flex:1;">
+            <label class="settings-label" for="prof-unit">Unit</label>
+            <select id="prof-unit" class="settings-input">
+              <option value="mL">mL (Milliliters)</option>
+              <option value="L" selected>L (Liters)</option>
+              <option value="grams">grams</option>
+              <option value="kg">kilograms</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-field-group">
+          <label class="settings-label" for="prof-notes">Operator Notes</label>
+          <textarea id="prof-notes" class="settings-input textarea" rows="2" placeholder="Enter batch lot, agronomist approval or field block...">Verified for block 4 apple orchard row by certified applicator.</textarea>
+        </div>
+
+        <!-- Mandatory Verification Checkbox -->
+        <div class="operator-review-box">
+          <span class="review-title">Operator Review Required</span>
+          <label class="checklist-item" style="padding:0;">
+            <input type="checkbox" id="check-operator-verified">
+            <span class="checklist-label bold">I confirm that this configuration has been verified.</span>
+          </label>
+        </div>
+
+        <button type="button" id="btn-save-unknown-profile" class="btn-action-primary" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span>SAVE &amp; SELECT PROFILE</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         12. LOGISTICS – ROS APPLICATION GUIDANCE SCREEN
+         ==================================================================== -->
+    <main id="screen-logistics-ros" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Logistics</h2>
+          <p class="screen-subtitle">Follow-me and directional control</p>
+        </div>
+        <div class="sub-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- ROS Integration Primary Card -->
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">AUTONOMOUS DISPATCH</span>
+          <span class="status-badge ready" id="ros-status-pill-badge">● CONNECTED</span>
+        </div>
+        
+        <h3 class="panel-heading">ROS INTEGRATION</h3>
+        <p class="panel-desc">
+          Use the connected ROS application to operate:
+        </p>
+
+        <ul class="bullet-feature-list">
+          <li>Follow-me mode</li>
+          <li>Navigation</li>
+          <li>Directional movement</li>
+          <li>Logistics control</li>
+        </ul>
+
+        <!-- 4 Steps Guidance Box -->
+        <div class="ros-steps-box">
+          <div class="ros-step-row">
+            <span class="ros-step-bubble">1</span>
+            <div class="ros-step-text">
+              <strong>Step 1:</strong> Confirm that the rover is connected to ROS.
+            </div>
+          </div>
+          <div class="ros-step-row">
+            <span class="ros-step-bubble">2</span>
+            <div class="ros-step-text">
+              <strong>Step 2:</strong> Open the configured ROS control application.
+            </div>
+          </div>
+          <div class="ros-step-row">
+            <span class="ros-step-bubble">3</span>
+            <div class="ros-step-text">
+              <strong>Step 3:</strong> Select the required logistics mode.
+            </div>
+          </div>
+          <div class="ros-step-row">
+            <span class="ros-step-bubble">4</span>
+            <div class="ros-step-text">
+              <strong>Step 4:</strong> Monitor rover status from the Fruity Q dashboard.
+            </div>
+          </div>
+        </div>
+
+        <div class="button-row" style="margin-top: 0.5rem;">
+          <button type="button" class="btn-action-primary" id="btn-open-ros-app">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            <span>OPEN ROS APPLICATION</span>
+          </button>
+          <button type="button" class="btn-action-secondary" data-nav-target="settings-screen">
+            <span>VIEW CONNECTION STATUS</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Local Manual Teleop Fallback -->
+      <section class="screen-card-panel">
+        <div class="panel-header-row">
+          <span class="operations-title">LOCAL BACKUP CONTROLS</span>
+          <span class="badge-tag">10 HZ TWIST</span>
+        </div>
+
+        <!-- Follow-me toggle -->
         <div class="follow-me-card">
           <div class="follow-me-info">
             <span class="follow-me-title">Follow-Me Mode</span>
@@ -387,113 +1281,72 @@
           </label>
         </div>
 
-        <!-- Speed Selector -->
+        <!-- Speed selector -->
         <div class="speed-selector-row">
           <span class="operations-title" style="margin-bottom:0;">SPEED</span>
           <div class="speed-chips">
-            <button type="button" class="btn-speed selected" id="btn-speed-slow" data-speed="slow">
-              Slow
-            </button>
-            <button type="button" class="btn-speed" id="btn-speed-medium" data-speed="medium">
-              Medium
-            </button>
+            <button type="button" class="btn-speed selected" id="btn-speed-slow" data-speed="slow">Slow</button>
+            <button type="button" class="btn-speed" id="btn-speed-medium" data-speed="medium">Medium</button>
           </div>
         </div>
 
-        <!-- Directional D-Pad (10 Hz Teleop, hold-to-move) -->
-        <div class="operations-title" style="margin-top: 0.5rem;">MANUAL ROVER DIRECTION (HOLD TO MOVE)</div>
+        <!-- Directional D-Pad (10 Hz, hold to move) -->
         <div class="teleop-dpad-container" id="teleop-dpad">
-          <!-- Up / Forward -->
           <button type="button" class="btn-teleop" id="btn-move-forward" data-linear="1" data-angular="0" aria-label="Forward">
-            <!-- Lucide: arrow-up -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
           </button>
-
-          <!-- Middle Row: Left, Center Spacer, Right -->
           <div class="dpad-row">
             <button type="button" class="btn-teleop" id="btn-move-left" data-linear="0" data-angular="1" aria-label="Turn Left">
-              <!-- Lucide: arrow-left -->
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
             </button>
             <div class="dpad-center-spacer"></div>
             <button type="button" class="btn-teleop" id="btn-move-right" data-linear="0" data-angular="-1" aria-label="Turn Right">
-              <!-- Lucide: arrow-right -->
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
           </div>
-
-          <!-- Down / Backward -->
           <button type="button" class="btn-teleop" id="btn-move-backward" data-linear="-1" data-angular="0" aria-label="Backward">
-            <!-- Lucide: arrow-down -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
           </button>
         </div>
-
-        <!-- Follow mode info notice -->
-        <div class="follow-active-notice" id="follow-active-notice" style="display:none;">
-          <!-- Lucide: info -->
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>Robot stops if connection is lost.</span>
-        </div>
-
-        <p class="context-text" style="text-align: center; font-size: 0.6875rem; margin-top: 0.5rem;">
-          Commands publish at 10 Hz while held down. Releasing immediately stops rover.
-        </p>
-      </div>
+      </section>
     </main>
 
     <!-- ====================================================================
-         5. SETTINGS SCREEN
+         13. SETTINGS SCREEN
          ==================================================================== -->
     <main id="settings-screen" class="screen">
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="screen-title">Settings</h2>
-        <div style="width: 2.75rem;"></div><!-- spacer to center title -->
+        <div class="header-title-wrap">
+          <h2 class="screen-title">Settings</h2>
+          <p class="screen-subtitle">Rover network &amp; simulation parameters</p>
+        </div>
+        <div style="width: 2rem;"></div>
       </div>
 
       <div class="screen-card-panel">
         <div class="operations-title">ROBOT CONNECTION</div>
-
         <div class="settings-field-group">
           <label class="settings-label" for="settings-robot-ip">Robot IP Address</label>
-          <input
-            type="text"
-            id="settings-robot-ip"
-            class="settings-input"
-            placeholder="e.g. 192.168.1.100"
-            inputmode="url"
-            autocomplete="off"
-            spellcheck="false"
-          >
+          <input type="text" id="settings-robot-ip" class="settings-input" placeholder="e.g. 192.168.1.100" inputmode="url" autocomplete="off" spellcheck="false">
           <p class="settings-hint">Enter the IP shown in your rover's WiFi setup page.</p>
         </div>
 
         <div class="settings-field-group">
           <label class="settings-label" for="settings-robot-port">ROS Bridge Port</label>
-          <input
-            type="number"
-            id="settings-robot-port"
-            class="settings-input"
-            placeholder="9090"
-            min="1"
-            max="65535"
-            inputmode="numeric"
-          >
+          <input type="number" id="settings-robot-port" class="settings-input" placeholder="9090" min="1" max="65535" inputmode="numeric">
         </div>
 
         <button type="button" id="btn-settings-connect" class="btn-action-primary">
-          <!-- Lucide: wifi -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>
           <span>CONNECT</span>
         </button>
       </div>
 
       <div class="screen-card-panel">
         <div class="operations-title">TEST / DEMO</div>
-
         <div class="settings-toggle-row">
           <div class="settings-toggle-info">
             <span class="follow-me-title">Mock Mode (Demo)</span>
@@ -504,12 +1357,9 @@
             <span class="slider"></span>
           </label>
         </div>
-        <p class="settings-hint" style="margin-top: 0.5rem;">
-          Changing Mock Mode will reload the page to apply.
-        </p>
       </div>
 
-      <div class="settings-version-row">Fruity Q · v1.0.0</div>
+      <div class="settings-version-row">Fruity Q · Autonomous Orchard Rover Mobile UI v2.0</div>
     </main>
 
   </div><!-- end .mobile-canvas -->
@@ -531,15 +1381,14 @@
   </div>
 
   <!-- ======================================================================
-       PERSISTENT EMERGENCY STOP BAR (Always visible)
+       PERSISTENT EMERGENCY STOP BAR (Always visible on EVERY screen)
        ====================================================================== -->
   <footer class="persistent-emergency-area">
-    <button type="button" id="btn-global-stop" class="emergency-stop-button">
-      <!-- Lucide: square (stop icon) -->
+    <button type="button" id="btn-global-stop" class="emergency-stop-button" aria-label="Soft Stop">
       <svg viewBox="0 0 24 24"><rect width="14" height="14" x="5" y="5" rx="2"/></svg>
-      <span id="btn-stop-text">SOFT STOP</span>
+      <span id="btn-stop-text">■ SOFT STOP</span>
     </button>
-    <div class="emergency-affordance-helper" id="stop-subline">Robot not connected: use the red button</div>
+    <div class="emergency-affordance-helper" id="stop-subline">Emergency: press the red button on the robot</div>
   </footer>
 
   <!-- ======================================================================
