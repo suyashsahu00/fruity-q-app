@@ -634,38 +634,78 @@ const UI = {
       });
     }
 
-    // --- Screen 9: Anomaly Detection (Safety Check) ---
+    // --- Screen 9: Anomaly Detection (Safety Check - Professional Agritech) ---
     const btnSimObstacle = document.getElementById("btn-sim-obstacle");
     const btnSimClear = document.getElementById("btn-sim-clear");
-    const overlayPerson = document.getElementById("anomaly-overlay-person");
-    const readout = document.getElementById("scan-classified-readout");
-    const resDetected = document.getElementById("anomaly-result-detected");
-    const resClear = document.getElementById("anomaly-result-clear");
-    const btnStopReview = document.getElementById("btn-stop-review-area");
+    const cardPerson = document.getElementById("target-card-person");
+    const cardUnplant = document.getElementById("target-card-unplant");
+    const badgePerson = document.getElementById("target-badge-person");
+    const badgeUnplant = document.getElementById("target-badge-unplant");
+    const hazardWedge = document.getElementById("sector-hazard-wedge");
+    const safeWedge = document.getElementById("sector-safe-wedge");
+    const radarPoint = document.getElementById("radar-obstacle-point");
+    const telemetryDist = document.getElementById("telemetry-distance-val");
+    const scannerPill = document.getElementById("scanner-status-pill");
+    const interlockAlert = document.getElementById("safety-interlock-alert");
+    const interlockClear = document.getElementById("safety-interlock-clear");
+    const btnReScan = document.getElementById("btn-re-scan-perimeter");
 
     const setAnomalyState = (hasObstacle) => {
       if (hasObstacle) {
         if (btnSimObstacle) btnSimObstacle.classList.add("selected");
         if (btnSimClear) btnSimClear.classList.remove("selected");
-        if (overlayPerson) overlayPerson.style.display = "flex";
-        if (readout) readout.innerText = "Target: Person (Inside 3m arc)";
-        if (resDetected) resDetected.style.display = "flex";
-        if (resClear) resClear.style.display = "none";
+
+        if (cardPerson) { cardPerson.className = "safety-target-card alert"; }
+        if (cardUnplant) { cardUnplant.className = "safety-target-card alert"; }
+        if (badgePerson) { badgePerson.className = "target-badge alert"; badgePerson.innerText = "ALERT: Person @ 1.8m"; }
+        if (badgeUnplant) { badgeUnplant.className = "target-badge alert"; badgeUnplant.innerText = "BLOCKED: Near Tree Row"; }
+
+        if (hazardWedge) hazardWedge.style.display = "block";
+        if (safeWedge) safeWedge.style.display = "none";
+        if (radarPoint) radarPoint.style.display = "block";
+        if (telemetryDist) telemetryDist.innerText = "1.8 m";
+
+        if (scannerPill) {
+          scannerPill.className = "telemetry-pill live";
+          scannerPill.innerText = "INTERLOCK ACTIVE";
+        }
+        if (interlockAlert) interlockAlert.style.display = "flex";
+        if (interlockClear) interlockClear.style.display = "none";
       } else {
         if (btnSimClear) btnSimClear.classList.add("selected");
         if (btnSimObstacle) btnSimObstacle.classList.remove("selected");
-        if (overlayPerson) overlayPerson.style.display = "none";
-        if (readout) readout.innerText = "Target: None · Surroundings Clear";
-        if (resDetected) resDetected.style.display = "none";
-        if (resClear) resClear.style.display = "flex";
+
+        if (cardPerson) { cardPerson.className = "safety-target-card clear"; }
+        if (cardUnplant) { cardUnplant.className = "safety-target-card clear"; }
+        if (badgePerson) { badgePerson.className = "target-badge clear"; badgePerson.innerText = "CLEAR (0 Detected)"; }
+        if (badgeUnplant) { badgeUnplant.className = "target-badge clear"; badgeUnplant.innerText = "CLEAR (Path Free)"; }
+
+        if (hazardWedge) hazardWedge.style.display = "none";
+        if (safeWedge) safeWedge.style.display = "block";
+        if (radarPoint) radarPoint.style.display = "none";
+        if (telemetryDist) telemetryDist.innerText = "None (> 4.0m)";
+
+        if (scannerPill) {
+          scannerPill.className = "telemetry-pill ready";
+          scannerPill.innerText = "ZONE CLEAR";
+        }
+        if (interlockAlert) interlockAlert.style.display = "none";
+        if (interlockClear) interlockClear.style.display = "flex";
       }
     };
 
     if (btnSimObstacle) btnSimObstacle.addEventListener("click", () => setAnomalyState(true));
     if (btnSimClear) btnSimClear.addEventListener("click", () => setAnomalyState(false));
-    if (btnStopReview) {
-      btnStopReview.addEventListener("click", () => {
-        alert("Area Review Initiated:\nRover camera locked onto obstacle. Spraying halted until personnel clear the zone.");
+    if (btnReScan) {
+      btnReScan.addEventListener("click", () => {
+        // Trigger simulated scanning effect then clear if confirmed
+        if (scannerPill) {
+          scannerPill.className = "telemetry-pill warning";
+          scannerPill.innerText = "RE-SCANNING...";
+        }
+        setTimeout(() => {
+          setAnomalyState(false);
+        }, 600);
       });
     }
 

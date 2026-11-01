@@ -1711,95 +1711,197 @@ svg {
 .metric-val.highlight { color: var(--color-module-icon-glyph); }
 
 /* ==========================================================================
-   SPRINKLING (ANOMALY DETECTION & BUCKETS)
+   SPRINKLING (PROFESSIONAL SAFETY CHECK & OBSTACLE SCANNER)
    ========================================================================== */
 .sim-toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: var(--color-surface-white);
-  border: 1px solid var(--color-surface-border);
+  border: 1.5px solid var(--color-surface-border);
   border-radius: var(--radius-inner);
-  padding: var(--space-6) var(--space-12);
+  padding: var(--space-8) var(--space-12);
 }
 
-.anomaly-box {
-  position: relative;
+/* 2 Targets Grid (Matching user sketch: Person & Unplant) */
+.safety-targets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
 }
-.scanner-sweep-beam {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #FF7A00, transparent);
-  animation: radarScan 2.5s ease-in-out infinite alternate;
-}
-@keyframes radarScan {
-  0% { top: 5%; }
-  100% { top: 90%; }
-}
-
-.anomaly-target-overlay {
-  position: absolute;
-  top: 30%;
-  left: 30%;
+.safety-target-card {
+  background-color: var(--color-surface-white);
+  border: 1.5px solid var(--color-surface-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-10) var(--space-12);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
+  justify-content: space-between;
+  gap: var(--space-8);
+  transition: all 0.2s ease;
 }
-.anomaly-icon-badge {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
+.safety-target-card.alert {
+  border-color: #FFCDD2;
+  background-color: #FFFDFD;
+}
+.safety-target-card.clear {
+  border-color: #C8E6C9;
+  background-color: #FCFFFC;
+}
+.target-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+.target-icon-wrap {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-inner);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
-.anomaly-icon-badge.person {
-  background-color: #C7211F;
-  color: #FFFFFF;
-  box-shadow: 0 0 10px rgba(199, 33, 31, 0.5);
+.target-icon-wrap.person {
+  background-color: #FFEBEE;
+  color: #C62828;
 }
-.anomaly-tag-bubble {
-  font-size: var(--font-size-badge);
+.target-icon-wrap.unplant {
+  background-color: #FFF3E0;
+  color: #E65100;
+}
+.safety-target-card.clear .target-icon-wrap {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+.target-title-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.target-name {
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.target-rule {
+  font-size: 10px;
+  color: var(--color-text-sub);
+}
+.target-status-line {
+  display: flex;
+  align-items: center;
+}
+.target-badge {
+  font-size: 10px;
   font-weight: 800;
-  padding: 0.2rem 0.5rem;
+  padding: 3px 6px;
   border-radius: var(--radius-badge);
+  letter-spacing: 0.3px;
 }
-.anomaly-tag-bubble.red {
-  background-color: #C7211F;
-  color: #FFFFFF;
+.target-badge.alert {
+  background-color: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
+}
+.target-badge.clear {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #C8E6C9;
 }
 
-.anomaly-result-card {
+/* Clean 2D Agritech Sector Diagram */
+.sector-map-container {
+  background: #0E1A12;
+  border: 1.5px solid #233A2B;
+  border-radius: var(--radius-inner);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sector-radar-svg {
+  display: block;
+  max-width: 100%;
+}
+.sector-telemetry-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  font-size: 11px;
+  color: #A5D6A7;
+}
+.sector-telemetry-row strong {
+  color: #FFFFFF;
+}
+.telemetry-sep {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Industrial Interlock Cards */
+.interlock-card {
+  border-radius: var(--radius-inner);
+  padding: var(--space-12) var(--space-14);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-  border-radius: var(--radius-inner);
-  padding: var(--space-12);
-  border: 1.5px solid var(--color-surface-border);
+  border: 1.5px solid;
 }
-.anomaly-result-card.danger {
-  background-color: #FFF8F7;
+.interlock-card.alert {
+  background-color: #FFFDFD;
   border-color: #FFCDD2;
+  border-left: 4px solid #D32F2F;
 }
-.anomaly-result-card.success {
-  background-color: #F8FCF8;
-  border-color: #C3E7C9;
+.interlock-card.clear {
+  background-color: #FCFFFC;
+  border-color: #C8E6C9;
+  border-left: 4px solid #2E7D32;
 }
-.anomaly-details-grid {
+.interlock-header {
   display: flex;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-10);
 }
-.detail-pair {
+.interlock-icon-box {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-inner);
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.pair-key { font-size: var(--font-size-caption); color: var(--color-text-sub); }
-.pair-val { font-size: var(--font-size-body); color: var(--color-text-main); }
+.interlock-icon-box.alert {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+.interlock-icon-box.clear {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+.interlock-title-group {
+  flex: 1;
+}
+.interlock-title {
+  font-size: var(--font-size-body);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+.interlock-card.alert .interlock-title { color: #C62828; }
+.interlock-card.clear .interlock-title { color: #2E7D32; }
+.interlock-desc {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-sub);
+  line-height: 1.35;
+}
 
 /* Bucket Cards Stack */
 .bucket-cards-stack {

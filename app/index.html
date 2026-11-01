@@ -965,6 +965,9 @@
     <!-- ====================================================================
          9. SPRINKLING – ANOMALY DETECTION (SAFETY CHECK) SCREEN
          ==================================================================== -->
+    <!-- ====================================================================
+         9. SPRINKLING - ANOMALY DETECTION (SAFETY CHECK) SCREEN
+         ==================================================================== -->
     <main id="screen-sprinkling-anomaly" class="screen">
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="screen-sprinkling-main" aria-label="Go Back">
@@ -972,7 +975,7 @@
         </button>
         <div class="header-title-wrap">
           <h2 class="screen-title">Safety Check</h2>
-          <p class="screen-subtitle">Detect obstacles before spraying</p>
+          <p class="screen-subtitle">Perimeter scan &amp; obstacle interlock verification</p>
         </div>
         <div class="sub-status-pill">
           <span class="status-dot"></span>
@@ -980,83 +983,155 @@
         </div>
       </div>
 
-      <!-- Detection Simulation Controls (For Operator Demo) -->
+      <!-- Quick Simulator Bar (Clean operator testing) -->
       <div class="sim-toggle-row">
-        <span class="operations-title" style="margin-bottom:0;">SCANNER TEST SIMULATION:</span>
+        <span class="operations-title" style="margin-bottom:0;">SENSOR SIMULATION FEED:</span>
         <div class="speed-chips">
-          <button type="button" class="btn-speed selected" id="btn-sim-obstacle">Obstacle</button>
-          <button type="button" class="btn-speed" id="btn-sim-clear">Clear</button>
+          <button type="button" class="btn-speed selected" id="btn-sim-obstacle">Obstacle (Alert)</button>
+          <button type="button" class="btn-speed" id="btn-sim-clear">Clear (Safe)</button>
         </div>
       </div>
 
-      <!-- Camera / Detection Area Frame -->
-      <section class="screen-card-panel vision-panel">
+      <!-- Detection Targets Checklist (Matching user sketch: Person & Unplant) -->
+      <div class="safety-targets-grid">
+        <!-- Target 1: Field Personnel -->
+        <div class="safety-target-card alert" id="target-card-person">
+          <div class="target-card-header">
+            <div class="target-icon-wrap person">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="target-title-wrap">
+              <span class="target-name">Field Personnel</span>
+              <span class="target-rule">3.0 m safety buffer required</span>
+            </div>
+          </div>
+          <div class="target-status-line">
+            <span class="target-badge alert" id="target-badge-person">ALERT: Person @ 1.8m</span>
+          </div>
+        </div>
+
+        <!-- Target 2: Non-Crop Obstacles (Unplant) -->
+        <div class="safety-target-card alert" id="target-card-unplant">
+          <div class="target-card-header">
+            <div class="target-icon-wrap unplant">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="target-title-wrap">
+              <span class="target-name">Non-Crop Objects (Unplant)</span>
+              <span class="target-rule">Trellis, stakes, hoses</span>
+            </div>
+          </div>
+          <div class="target-status-line">
+            <span class="target-badge alert" id="target-badge-unplant">BLOCKED: Near Tree Row</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional 2D Spray Sector Diagram -->
+      <section class="screen-card-panel">
         <div class="panel-header-row">
-          <span class="operations-title">ORCHARD SPRAY ZONE SCAN</span>
-          <span class="telemetry-pill live">RADAR ACTIVE</span>
+          <span class="operations-title">SPRAY ARC SECTOR (120&deg; FORWARD LiDAR)</span>
+          <span class="telemetry-pill live" id="scanner-status-pill">INTERLOCK ACTIVE</span>
         </div>
 
-        <div class="camera-viewfinder-box anomaly-box">
-          <div class="scanner-sweep-beam"></div>
+        <!-- Clean Agritech Sector Diagram -->
+        <div class="sector-map-container" id="sector-map-container">
+          <svg class="sector-radar-svg" viewBox="0 0 320 180" width="100%" height="180">
+            <!-- Background Distance Rings -->
+            <path d="M 20 160 A 140 140 0 0 1 300 160" fill="none" stroke="rgba(46, 125, 50, 0.2)" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <path d="M 60 160 A 100 100 0 0 1 260 160" fill="none" stroke="rgba(46, 125, 50, 0.3)" stroke-width="1.5"/>
+            <path d="M 100 160 A 60 60 0 0 1 220 160" fill="none" stroke="rgba(211, 47, 47, 0.35)" stroke-width="1.5"/>
 
-          <!-- Obstacle markers -->
-          <div class="anomaly-target-overlay" id="anomaly-overlay-person">
-            <div class="anomaly-icon-badge person">
-              <!-- Person icon -->
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <span class="anomaly-tag-bubble red">👤 Person Detected (1.8m)</span>
-          </div>
+            <!-- Distance labels -->
+            <text x="160" y="26" text-anchor="middle" fill="#718E7A" font-size="10" font-weight="700">3.5 m (Safe Area)</text>
+            <text x="160" y="66" text-anchor="middle" fill="#718E7A" font-size="10" font-weight="700">2.5 m (Warning Zone)</text>
+            <text x="160" y="106" text-anchor="middle" fill="#C62828" font-size="10" font-weight="700">1.5 m (Hazard Zone)</text>
 
-          <div class="viewfinder-footer">
-            <span id="scan-classified-readout">Target: Person (High Probability)</span>
-            <span>Angle: +22° East</span>
+            <!-- 120-degree Sector Boundaries -->
+            <line x1="160" y1="160" x2="38" y2="40" stroke="rgba(46, 125, 50, 0.25)" stroke-width="1"/>
+            <line x1="160" y1="160" x2="282" y2="40" stroke="rgba(46, 125, 50, 0.25)" stroke-width="1"/>
+            <line x1="160" y1="160" x2="160" y2="20" stroke="rgba(46, 125, 50, 0.15)" stroke-width="1" stroke-dasharray="2 2"/>
+
+            <!-- Alert Sector Shading (Shown when obstacle is detected) -->
+            <path id="sector-hazard-wedge" d="M 160 160 L 100 70 A 110 110 0 0 1 220 70 Z" fill="rgba(211, 47, 47, 0.15)" stroke="#D32F2F" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+            <!-- Clear Sector Shading (Shown when clear) -->
+            <path id="sector-safe-wedge" d="M 160 160 L 38 40 A 140 140 0 0 1 282 40 Z" fill="rgba(46, 125, 50, 0.12)" stroke="#2E7D32" stroke-width="1.5" style="display: none;"/>
+
+            <!-- Obstacle Marker Point (Positioned at 1.8m, +22 deg) -->
+            <g id="radar-obstacle-point" transform="translate(195, 95)">
+              <circle cx="0" cy="0" r="10" fill="rgba(211, 47, 47, 0.2)"/>
+              <circle cx="0" cy="0" r="5" fill="#D32F2F"/>
+              <rect x="8" y="-12" width="105" height="24" rx="4" fill="#FFFFFF" stroke="#D32F2F" stroke-width="1.5"/>
+              <text x="14" y="4" fill="#C62828" font-size="10" font-weight="800">Person &bull; 1.8m (+22&deg;)</text>
+            </g>
+
+            <!-- Rover Base Representation -->
+            <g transform="translate(160, 160)">
+              <!-- Spray Nozzle Boom -->
+              <rect x="-35" y="-6" width="70" height="6" rx="2" fill="#2E7D32"/>
+              <!-- Spray Nozzles -->
+              <circle cx="-28" cy="-8" r="2" fill="#81C784"/>
+              <circle cx="-14" cy="-8" r="2" fill="#81C784"/>
+              <circle cx="0" cy="-8" r="2" fill="#81C784"/>
+              <circle cx="14" cy="-8" r="2" fill="#81C784"/>
+              <circle cx="28" cy="-8" r="2" fill="#81C784"/>
+              <!-- Rover Chassis -->
+              <rect x="-18" y="0" width="36" height="18" rx="3" fill="#1B3A26" stroke="#2E7D32" stroke-width="1"/>
+              <text x="0" y="12" text-anchor="middle" fill="#A5D6A7" font-size="8" font-weight="800">ROVER</text>
+            </g>
+          </svg>
+
+          <!-- Telemetry Data Strip -->
+          <div class="sector-telemetry-row">
+            <span class="telemetry-item"><strong id="telemetry-distance-val">1.8 m</strong> Nearest Obstacle</span>
+            <span class="telemetry-sep">&bull;</span>
+            <span class="telemetry-item"><strong>120&deg;</strong> Sector Angle</span>
+            <span class="telemetry-sep">&bull;</span>
+            <span class="telemetry-item"><strong>4.0 m</strong> LiDAR Range</span>
           </div>
         </div>
 
-        <!-- Result State: YES - STOP SPRAYING -->
-        <div id="anomaly-result-detected" class="anomaly-result-card danger">
-          <div class="panel-header-row">
-            <span class="operations-title" style="color: #C7211F;">ANOMALY DETECTED</span>
-            <span class="status-badge stop">● YES — STOP SPRAYING</span>
-          </div>
-          <div class="anomaly-details-grid">
-            <div class="detail-pair">
-              <span class="pair-key">Detected Type:</span>
-              <strong class="pair-val">👤 Person</strong>
+        <!-- OPERATIONAL SAFETY INTERLOCK CARD -->
+        
+        <!-- State A: ALERT / INTERLOCK ENGAGED -->
+        <div id="safety-interlock-alert" class="interlock-card alert">
+          <div class="interlock-header">
+            <div class="interlock-icon-box alert">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
-            <div class="detail-pair">
-              <span class="pair-key">Range / Safety:</span>
-              <strong class="pair-val">Inside 3m Spray Arc</strong>
+            <div class="interlock-title-group">
+              <h4 class="interlock-title">SPRAY SYSTEM INTERLOCK ACTIVE</h4>
+              <p class="interlock-desc">Automated spray valve is electronically isolated. Clear all personnel and obstacles before re-verifying.</p>
             </div>
           </div>
-          <div class="notice-card warning" style="margin: 0.5rem 0;">
-            <div class="notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></div>
-            <div class="notice-content">
-              <span class="notice-title">Spraying Disabled</span>
-              <p class="notice-text">Spraying is disabled until the area is clear.</p>
-            </div>
+
+          <div class="button-row" style="margin-top: 0.5rem;">
+            <button type="button" class="btn-action-secondary" id="btn-re-scan-perimeter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>RE-SCAN PERIMETER</span>
+            </button>
+            <button type="button" class="btn-action-cancel" data-nav-target="screen-sprinkling-main">
+              <span>ABORT TO MENU</span>
+            </button>
           </div>
-          <button type="button" class="btn-action-cancel" id="btn-stop-review-area">
-            <span>STOP &amp; REVIEW AREA</span>
-          </button>
         </div>
 
-        <!-- Result State: NO - AREA CLEAR -->
-        <div id="anomaly-result-clear" class="anomaly-result-card success" style="display: none;">
-          <div class="panel-header-row">
-            <span class="operations-title" style="color: #137333;">SURROUNDINGS SCAN</span>
-            <span class="status-badge ready">● NO — AREA CLEAR</span>
-          </div>
-          <div class="notice-card success" style="margin: 0.5rem 0;">
-            <div class="notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="notice-content">
-              <span class="notice-title">AREA CLEAR</span>
-              <p class="notice-text">No people or non-target plants detected in the perimeter.</p>
+        <!-- State B: CLEAR / INTERLOCK PASSED -->
+        <div id="safety-interlock-clear" class="interlock-card clear" style="display: none;">
+          <div class="interlock-header">
+            <div class="interlock-icon-box clear">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="interlock-title-group">
+              <h4 class="interlock-title">PERIMETER VERIFIED SAFE</h4>
+              <p class="interlock-desc">All safety interlocks satisfied. Zero obstacles detected within 3.0 m. Ready to configure formulation.</p>
             </div>
           </div>
-          <button type="button" class="btn-action-primary" data-nav-target="screen-sprinkling-buckets">
+
+          <button type="button" class="btn-action-primary" data-nav-target="screen-sprinkling-buckets" style="margin-top: 0.5rem;">
             <span>CONTINUE TO BUCKET SELECTION</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </button>
         </div>
       </section>
