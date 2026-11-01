@@ -1,105 +1,115 @@
 /* ==========================================================================
-   FRUITY Q - DESIGN TOKENS (Extracted from Figma 390x844 Frame)
-   All colors, font sizes, spacing, and radii live here as CSS variables.
-   Use ONLY these variables throughout the rest of the stylesheet.
+   FRUITY Q - EXACT FIGMA DESIGN TOKENS (Frame 2:45 / 390x844)
+   Directly fetched from Figma API (File 9O7f1jmPSZdgOF8CZQW40V, Node 2:45).
+   All colors, font sizes, spacing, and radii live ONLY here as CSS variables.
    ========================================================================== */
 
 :root {
   /* ------------------------------------------------------------------------
-     1. COLOR PALETTE
+     1. COLOR PALETTE (Exact RGBA extracted from Figma node properties)
      ------------------------------------------------------------------------ */
-  /* Canvas Background: warm light sage / organic cream tint */
-  --color-canvas-bg: #F4F6F0;
-  
-  /* Primary Surfaces */
+  /* Canvas Background: rgba(246, 248, 243, 1) */
+  --color-canvas-bg: #F6F8F3;
+
+  /* Card Surfaces: White rgba(255, 255, 255, 1) & Subtle Border */
   --color-surface-white: #FFFFFF;
   --color-surface-border: #E5E9E1;
-  --color-surface-shadow: rgba(30, 45, 30, 0.05);
 
-  /* Rover Card (Dark Forest Slate) */
-  --color-rover-bg: #1A2E22;
-  --color-rover-inner-bg: #243B2E;
-  --color-rover-icon-bg: #2F4D3C;
-  --color-rover-border: rgba(255, 255, 255, 0.08);
+  /* Text Colors */
+  --color-text-main: #1A291F;         /* rgba(26, 41, 31, 1) - Titles & Brand */
+  --color-text-sub: #4A5A4E;          /* Tuned from #667569 to #4A5A4E for bright sunlight */
+  --color-text-muted: #667569;        /* rgba(102, 117, 105, 1) - Eyebrow & Counters */
+
+  /* Rover Card (Dark Slate Forest): rgba(23, 43, 31, 1) */
+  --color-rover-bg: #172B1F;
+  --color-rover-inner-bg: #243D2B;    /* rgba(36, 61, 43, 1) */
+  --color-rover-icon-bg: #304D38;     /* rgba(48, 77, 56, 1) */
+  --color-rover-eyebrow: #C2D6C2;     /* rgba(194, 214, 194, 1) */
+  --color-rover-device: #A1B8A3;      /* rgba(161, 184, 163, 1) */
   --color-rover-text-title: #FFFFFF;
-  --color-rover-text-sub: #A3B8AA;
-  --color-rover-text-label: #7D9685;
+  --color-rover-text-sub: #C7D6C7;    /* rgba(199, 214, 199, 1) */
+  --color-rover-detail: #D9DED1;      /* rgba(217, 222, 209, 1) */
+  --color-rover-sync: #9EB2A3;        /* rgba(158, 178, 163, 1) */
 
-  /* Typography Colors */
-  --color-text-main: #142018;        /* Bold dark titles */
-  --color-text-sub: #4A5A4E;         /* Descriptions (sunlight contrast) */
-  --color-text-label: #607264;       /* Section kicker / small label */
+  /* Module Icon Tile: rgba(232, 242, 227, 1) + Glyph rgba(41, 92, 59, 1) */
+  --color-module-icon-bg: #E8F2E3;
+  --color-module-icon-glyph: #295C3B;
 
-  /* Identity Orange Accent (Fruity Q) */
-  --color-accent-orange: #FF7A00;
-  --color-accent-orange-bg: rgba(255, 122, 0, 0.12);
+  /* Unavailable / Locked Badge: rgba(240, 242, 235, 1) + Text rgba(102, 117, 105, 1) */
+  --color-locked-bg: #F0F2EB;
+  --color-locked-text: #667569;
+  --color-locked-dot: #667569;
 
-  /* Status Colors: Offline / Locked */
-  --color-offline-bg: #FDE8E8;
-  --color-offline-text: #C53030;
-  --color-offline-dot: #E53E3E;
-  --color-locked-bg: #EAEFEA;
-  --color-locked-text: #5A6D5E;
-  --color-locked-dot: #7A8E7E;
-
-  /* Status Colors: Online / Ready */
-  --color-online-bg: #E6F4EA;
-  --color-online-text: #137333;
-  --color-online-dot: #34A853;
+  /* Online / Ready Badge */
   --color-ready-bg: #E6F4EA;
   --color-ready-text: #137333;
   --color-ready-dot: #34A853;
 
-  /* Notice Banner (Reconnect) */
-  --color-notice-bg: #FEF7E6;
-  --color-notice-border: #FBE6B8;
-  --color-notice-title: #B06000;
-  --color-notice-body: #6D5E4A;
+  /* Global Connection Pill: Offline rgba(255, 235, 229, 1) + Text rgba(199, 33, 31, 1) */
+  --color-status-offline-bg: #FFEBE5;
+  --color-status-offline-text: #C7211F;
+  --color-status-online-bg: #E6F4EA;
+  --color-status-online-text: #137333;
 
-  /* Emergency STOP */
-  --color-stop-bg: #C5221F;
-  --color-stop-bg-active: #9B1A17;
+  /* Reconnect Guidance Card: rgba(255, 245, 222, 1) + Title rgba(176, 110, 26, 1) */
+  --color-guidance-bg: #FFF5DE;
+  --color-guidance-title: #B06E1A;
+  --color-guidance-body: #667569;
+
+  /* Emergency Stop: rgba(199, 33, 31, 1) */
+  --color-stop-bg: #C7211F;
+  --color-stop-bg-active: #961715;
   --color-stop-text: #FFFFFF;
 
-  /* Module Icons Background */
-  --color-module-icon-bg: #E4EFE3;
-  --color-module-icon-color: #2F5A38;
+  /* Identity Orange Accent */
+  --color-accent-orange: #FF7A00;
 
   /* ------------------------------------------------------------------------
-     2. SPACING SCALE
+     2. SPACING SCALE (From Figma autolayout gap & padding)
      ------------------------------------------------------------------------ */
   --space-2: 2px;
+  --space-3: 3px;
   --space-4: 4px;
+  --space-5: 5px;
   --space-6: 6px;
   --space-8: 8px;
+  --space-9: 9px;
   --space-10: 10px;
+  --space-11: 11px;
   --space-12: 12px;
+  --space-13: 13px;
   --space-14: 14px;
   --space-16: 16px;
   --space-20: 20px;
   --space-24: 24px;
-  --space-28: 28px;
   --space-32: 32px;
 
   /* ------------------------------------------------------------------------
-     3. BORDER RADIUS SCALE
+     3. BORDER RADII (From Figma cornerRadius properties)
      ------------------------------------------------------------------------ */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-card: 20px;
-  --radius-outer: 24px;
+  --radius-badge: 11px;               /* Fruit Q mark */
+  --radius-guidance: 13px;            /* Connection guidance card */
+  --radius-inner-tile: 14px;          /* Rover visual & icon containers */
+  --radius-module-badge: 15px;        /* Unavailable badge */
+  --radius-card: 17px;                /* Module cards */
+  --radius-status-pill: 18px;         /* Global connection state */
+  --radius-rover-card: 20px;          /* Rover connection card */
+  --radius-stop: 26px;                /* Emergency stop button */
+  --radius-frame: 28px;               /* Outer frame */
   --radius-pill: 9999px;
 
   /* ------------------------------------------------------------------------
-     4. TYPOGRAPHY SCALE (System font, crisp mobile metrics)
+     4. TYPOGRAPHY SCALE (Inter / System font)
      ------------------------------------------------------------------------ */
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --font-size-xs: 11px;
-  --font-size-sm: 13px;
-  --font-size-body: 14px;
-  --font-size-base: 15px;
-  --font-size-card-title: 17px;
-  --font-size-title: 22px;
+  --font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-size-sync: 9px;
+  --font-size-badge: 10px;
+  --font-size-eyebrow: 10px;
+  --font-size-guidance: 11px;
+  --font-size-context: 11px;
+  --font-size-body: 13px;             /* Enforced min 13px for sunlight readability */
+  --font-size-card-title: 15px;
+  --font-size-section: 18px;
   --font-size-brand: 22px;
 }
 
@@ -122,19 +132,18 @@ body {
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
-  /* Extra bottom padding to ensure content is never covered by the fixed STOP bar */
-  padding-bottom: calc(64px + var(--space-32) + max(16px, env(safe-area-inset-bottom)));
+  /* Generous padding-bottom so the last element is never hidden by the STOP bar */
+  padding-bottom: calc(56px + var(--space-32) + max(16px, env(safe-area-inset-bottom)));
 }
 
-/* Layout Frame (390px mobile viewport max container) */
+/* Mobile Canvas (390px frame) */
 .mobile-canvas {
   width: 100%;
-  max-width: 420px;
-  padding-left: max(var(--space-16), env(safe-area-inset-left));
-  padding-right: max(var(--space-16), env(safe-area-inset-right));
+  max-width: 410px;
+  padding: var(--space-16);
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: var(--space-12);
 }
 
 /* Demo Mode Banner */
@@ -142,7 +151,7 @@ body {
   display: none;
   background-color: var(--color-accent-orange);
   color: #FFFFFF;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-body);
   font-weight: 800;
   text-align: center;
   padding: var(--space-8) var(--space-16);
@@ -178,39 +187,38 @@ body {
 }
 
 .splash-icon-wrapper {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   background-color: var(--color-surface-white);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-card);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px var(--color-surface-shadow);
 }
 
 .splash-icon-wrapper svg {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   stroke: var(--color-accent-orange);
 }
 
 .splash-title {
-  font-size: var(--font-size-title);
-  font-weight: 800;
+  font-size: var(--font-size-brand);
+  font-weight: 700;
   margin-top: var(--space-16);
 }
 
 .splash-sub {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-body);
   color: var(--color-text-sub);
   margin-top: var(--space-4);
 }
 
 .splash-loader {
-  width: 32px;
-  height: 32px;
-  margin-top: var(--space-24);
+  width: 28px;
+  height: 28px;
+  margin-top: var(--space-20);
   border: 3px solid var(--color-surface-border);
   border-top-color: var(--color-accent-orange);
   border-radius: 50%;
@@ -221,158 +229,158 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Top App Header */
+/* --------------------------------------------------------------------------
+   APP HEADER
+   -------------------------------------------------------------------------- */
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: max(var(--space-16), env(safe-area-inset-top));
-  padding-bottom: var(--space-4);
+  gap: var(--space-10);
+  padding-top: max(var(--space-4), env(safe-area-inset-top));
 }
 
-.brand-wrapper {
+.brand {
   display: flex;
   align-items: center;
-  gap: var(--space-10);
+  gap: var(--space-9);
 }
 
-.brand-logo-badge {
+.fruit-q-mark {
   width: 38px;
   height: 38px;
-  background-color: var(--color-surface-white);
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-md);
+  background-color: var(--color-module-icon-bg);
+  border-radius: var(--radius-badge);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.brand-logo-badge svg {
-  width: 22px;
-  height: 22px;
-  stroke: var(--color-text-main);
+.fruit-q-mark svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-module-icon-glyph);
 }
 
-/* Orange accent dot on logo mark */
-.brand-logo-accent {
+/* Orange identity accent dot */
+.brand-accent-dot {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 5px;
+  right: 5px;
   width: 6px;
   height: 6px;
   background-color: var(--color-accent-orange);
   border-radius: 50%;
 }
 
-.brand-title {
+.app-name {
   font-size: var(--font-size-brand);
-  font-weight: 800;
+  font-weight: 700;
+  color: var(--color-text-main);
   letter-spacing: -0.4px;
 }
 
-/* Status Pill */
-.status-pill {
+/* Global Connection State Pill */
+.global-connection-state {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-6) var(--space-12);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  background-color: var(--color-offline-bg);
-  color: var(--color-offline-text);
-  transition: all 0.25s ease;
+  gap: var(--space-5);
+  padding: 6px var(--space-9);
+  border-radius: var(--radius-status-pill);
+  background-color: var(--color-status-offline-bg);
+  color: var(--color-status-offline-text);
+  font-size: var(--font-size-badge);
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-.status-pill .dot {
+.status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-offline-dot);
+  background-color: var(--color-status-offline-text);
 }
 
-.status-pill.online {
-  background-color: var(--color-online-bg);
-  color: var(--color-online-text);
+.global-connection-state.online {
+  background-color: var(--color-status-online-bg);
+  color: var(--color-status-online-text);
 }
 
-.status-pill.online .dot {
-  background-color: var(--color-online-dot);
-}
-
-/* Page Intro Header */
-.page-header {
-  margin-top: var(--space-4);
-}
-
-.page-title {
-  font-size: var(--font-size-title);
-  font-weight: 800;
-  color: var(--color-text-main);
-  letter-spacing: -0.3px;
-}
-
-.page-subtitle {
-  font-size: var(--font-size-body);
-  color: var(--color-text-sub);
-  margin-top: var(--space-4);
-  font-weight: 500;
+.global-connection-state.online .status-dot {
+  background-color: var(--color-status-online-text);
 }
 
 /* --------------------------------------------------------------------------
-   ROVER CONNECTION CARD (Dark Forest Slate)
+   WELCOME & CONTEXT
    -------------------------------------------------------------------------- */
-.rover-card {
-  background-color: var(--color-rover-bg);
-  border-radius: var(--radius-outer);
-  padding: var(--space-16) var(--space-16) var(--space-14);
-  color: #FFFFFF;
+.welcome-context {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
-  box-shadow: 0 8px 24px rgba(15, 30, 20, 0.12);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
-.rover-card-topbar {
+.greeting {
+  font-size: var(--font-size-section);
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.2px;
+}
+
+.context-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-sub);
+}
+
+/* --------------------------------------------------------------------------
+   ROVER CONNECTION CARD
+   -------------------------------------------------------------------------- */
+.rover-connection-card {
+  background-color: var(--color-rover-bg);
+  border-radius: var(--radius-rover-card);
+  padding: var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  color: #FFFFFF;
+}
+
+.rover-card-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.rover-card-kicker {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
+.eyebrow {
+  font-size: var(--font-size-eyebrow);
+  font-weight: 700;
+  color: var(--color-rover-eyebrow);
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--color-rover-text-label);
 }
 
-.rover-card-device {
-  font-size: var(--font-size-xs);
+.connection-context {
+  font-size: var(--font-size-sync);
   font-weight: 700;
-  color: var(--color-rover-text-label);
-  letter-spacing: 0.5px;
+  color: var(--color-rover-device);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
-/* Inner Banner */
-.rover-card-inner {
+.rover-visual-state {
   background-color: var(--color-rover-inner-bg);
-  border: 1px solid var(--color-rover-border);
-  border-radius: var(--radius-card);
-  padding: var(--space-14);
+  border-radius: var(--radius-inner-tile);
+  padding: var(--space-10);
   display: flex;
   align-items: center;
-  gap: var(--space-14);
-  overflow: hidden;
+  gap: var(--space-12);
 }
 
-.rover-avatar-box {
+.rover-icon-tile {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-inner-tile);
   background-color: var(--color-rover-icon-bg);
   display: flex;
   align-items: center;
@@ -381,140 +389,152 @@ body {
   overflow: hidden;
 }
 
-.rover-avatar-box img {
+.rover-icon-tile img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: var(--radius-inner-tile);
 }
 
-.rover-avatar-box svg {
+.rover-icon-tile svg {
   width: 24px;
   height: 24px;
-  stroke: var(--color-rover-text-title);
+  stroke: #FFFFFF;
 }
 
-.rover-info-col {
+.rover-connection-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   flex: 1;
   min-width: 0;
 }
 
-.rover-status-heading {
+.rover-status {
   font-size: var(--font-size-card-title);
   font-weight: 700;
   color: var(--color-rover-text-title);
   letter-spacing: -0.2px;
 }
 
-.rover-status-desc {
-  font-size: var(--font-size-sm);
+.rover-substatus {
+  font-size: var(--font-size-body);
   color: var(--color-rover-text-sub);
-  margin-top: var(--space-2);
 }
 
-.rover-card-footer {
+.connection-help-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: var(--font-size-xs);
-  color: var(--color-rover-text-label);
-  padding-top: var(--space-2);
+  justify-content: space-between;
+  padding-top: var(--space-4);
+  font-size: var(--font-size-body);
 }
 
-.rover-footer-status {
+.connection-indicator-group {
   display: flex;
   align-items: center;
   gap: var(--space-6);
 }
 
-.rover-footer-dot {
+.connection-indicator {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-offline-dot);
+  background-color: var(--color-status-offline-text);
 }
 
-.rover-footer-dot.online {
-  background-color: var(--color-online-dot);
+.connection-indicator.online {
+  background-color: var(--color-status-online-text);
+}
+
+.connection-detail {
+  font-size: var(--font-size-body);
+  color: var(--color-rover-detail);
+}
+
+.last-sync {
+  font-size: var(--font-size-sync);
+  color: var(--color-rover-sync);
 }
 
 /* --------------------------------------------------------------------------
-   SECTION LABELS
+   OPERATIONS SECTION HEADING
    -------------------------------------------------------------------------- */
-.section-header {
+.operations-section-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: var(--space-6);
 }
 
-.section-title {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  text-transform: uppercase;
+.operations-title {
+  font-size: var(--font-size-eyebrow);
+  font-weight: 700;
+  color: var(--color-text-muted);
   letter-spacing: 0.8px;
-  color: var(--color-text-label);
+  text-transform: uppercase;
 }
 
-.section-count {
-  font-size: var(--font-size-xs);
+.module-count {
+  font-size: var(--font-size-sync);
   font-weight: 700;
-  letter-spacing: 0.5px;
-  color: var(--color-text-label);
+  color: var(--color-text-muted);
+  letter-spacing: 0.6px;
 }
 
 /* --------------------------------------------------------------------------
-   MODULE ACTION CARDS
+   MODULE CARDS
    -------------------------------------------------------------------------- */
-.cards-list {
+.cards-container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-10);
 }
 
 .module-card {
   background-color: var(--color-surface-white);
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-outer);
-  padding: var(--space-16) var(--space-18);
+  border-radius: var(--radius-card);
+  padding: var(--space-13);
   display: flex;
   align-items: center;
-  gap: var(--space-14);
-  box-shadow: 0 4px 12px var(--color-surface-shadow);
+  gap: var(--space-13);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.15s ease, opacity 0.2s ease;
-  min-height: 80px;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+  min-height: 74px;
 }
 
 .module-card:active:not(.locked) {
   transform: scale(0.98);
 }
 
-/* Locked & non-tappable when offline */
 .module-card.locked {
   cursor: not-allowed;
   opacity: 0.72;
   pointer-events: none;
 }
 
-.module-icon-box {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
+.module-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-inner-tile);
   background-color: var(--color-module-icon-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--color-module-icon-color);
 }
 
-.module-icon-box svg {
-  width: 26px;
-  height: 26px;
-  stroke: var(--color-module-icon-color);
+.module-icon-container svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--color-module-icon-glyph);
 }
 
-.module-content {
+.module-label-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   flex: 1;
   min-width: 0;
 }
@@ -526,74 +546,70 @@ body {
   letter-spacing: -0.2px;
 }
 
-.module-desc {
-  font-size: var(--font-size-sm);
+.module-description {
+  font-size: var(--font-size-body);
   color: var(--color-text-sub);
-  margin-top: var(--space-2);
   line-height: 1.35;
 }
 
-/* Card Status Chip */
-.chip-state {
+/* Unavailable Badge */
+.module-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-4) var(--space-10);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
+  padding: 5px var(--space-8);
+  border-radius: var(--radius-module-badge);
   background-color: var(--color-locked-bg);
   color: var(--color-locked-text);
+  font-size: var(--font-size-sync);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.chip-state .dot {
+.module-badge .dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background-color: var(--color-locked-dot);
 }
 
-.chip-state.ready {
+.module-badge.ready {
   background-color: var(--color-ready-bg);
   color: var(--color-ready-text);
 }
 
-.chip-state.ready .dot {
+.module-badge.ready .dot {
   background-color: var(--color-ready-dot);
 }
 
 /* --------------------------------------------------------------------------
-   NOTICE BANNER (Reconnect to continue)
+   CONNECTION GUIDANCE CARD (Reconnect notice)
    -------------------------------------------------------------------------- */
-.notice-box {
-  background-color: var(--color-notice-bg);
-  border: 1px solid var(--color-notice-border);
-  border-radius: var(--radius-card);
-  padding: var(--space-12) var(--space-16);
+.connection-guidance-card {
+  background-color: var(--color-guidance-bg);
+  border-radius: var(--radius-guidance);
+  padding: var(--space-11);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-.notice-title {
-  font-size: var(--font-size-sm);
-  font-weight: 800;
-  color: var(--color-notice-title);
+.connection-guidance-title {
+  font-size: var(--font-size-guidance);
+  font-weight: 700;
+  color: var(--color-guidance-title);
 }
 
-.notice-body {
-  font-size: var(--font-size-xs);
-  color: var(--color-notice-body);
-  font-weight: 500;
+.connection-guidance-body {
+  font-size: var(--font-size-body);
+  color: var(--color-guidance-body);
 }
 
 /* --------------------------------------------------------------------------
-   FIXED EMERGENCY STOP BAR (Height: 56px, Bottom pinned)
+   PERSISTENT EMERGENCY ACTION AREA (Pinned STOP Bar)
    -------------------------------------------------------------------------- */
-.stop-bar-fixed-wrapper {
+.persistent-emergency-area {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -602,104 +618,101 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 0 var(--space-16) max(var(--space-16), env(safe-area-inset-bottom));
-  background: linear-gradient(to top, var(--color-canvas-bg) 75%, transparent 100%);
+  background: linear-gradient(to top, var(--color-canvas-bg) 80%, transparent 100%);
   z-index: 8000;
   pointer-events: none;
 }
 
-.btn-emergency-stop {
+.emergency-stop-button {
   pointer-events: auto;
   width: 100%;
-  max-width: 420px;
-  height: 56px;
+  max-width: 410px;
+  height: 52px;
   background-color: var(--color-stop-bg);
   color: var(--color-stop-text);
-  font-size: var(--font-size-base);
-  font-weight: 800;
+  font-size: var(--font-size-body);
+  font-weight: 700;
   letter-spacing: 1px;
   border: none;
-  border-radius: var(--radius-outer);
+  border-radius: var(--radius-stop);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-8);
-  box-shadow: 0 4px 14px rgba(197, 34, 31, 0.4);
+  gap: var(--space-9);
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(199, 33, 31, 0.35);
   transition: transform 0.1s ease, background 0.15s ease;
   text-transform: uppercase;
 }
 
-.btn-emergency-stop svg {
-  width: 20px;
-  height: 20px;
+.emergency-stop-button svg {
+  width: 14px;
+  height: 14px;
   fill: currentColor;
 }
 
-.btn-emergency-stop:active {
+.emergency-stop-button:active {
   transform: scale(0.98);
   background-color: var(--color-stop-bg-active);
 }
 
-.btn-emergency-stop.active-stopped {
+.emergency-stop-button.active-stopped {
   background-color: #202124;
   color: #FDD663;
 }
 
-.stop-bar-caption {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-label);
-  margin-top: var(--space-6);
-  font-weight: 500;
+.emergency-affordance-helper {
+  font-size: var(--font-size-sync);
+  color: var(--color-text-muted);
+  margin-top: var(--space-5);
   text-align: center;
 }
 
 /* --------------------------------------------------------------------------
-   SPRINKLING SCREEN (Inside Mobile Canvas)
+   SPRINKLING SCREEN
    -------------------------------------------------------------------------- */
 .screen {
   display: none;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: var(--space-12);
 }
 
 .screen.active {
   display: flex;
 }
 
-.screen-header-row {
+.sprinkling-header {
   display: flex;
   align-items: center;
-  gap: var(--space-12);
-  margin-top: var(--space-8);
+  gap: var(--space-10);
+  margin-top: var(--space-4);
 }
 
-.btn-screen-back {
+.btn-back {
   background-color: var(--color-surface-white);
   border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-md);
-  width: 42px;
-  height: 42px;
+  border-radius: var(--radius-guidance);
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.btn-screen-back svg {
-  width: 20px;
-  height: 20px;
+.btn-back svg {
+  width: 18px;
+  height: 18px;
   stroke: var(--color-text-main);
 }
 
 .sprinkling-panel {
   background-color: var(--color-surface-white);
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-outer);
-  padding: var(--space-20);
-  box-shadow: 0 4px 16px var(--color-surface-shadow);
+  border-radius: var(--radius-card);
+  padding: var(--space-16);
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: var(--space-14);
 }
 
 .duration-selector {
@@ -713,9 +726,9 @@ body {
   border: 1px solid var(--color-surface-border);
   color: var(--color-text-main);
   font-size: var(--font-size-card-title);
-  font-weight: 800;
-  border-radius: var(--radius-md);
-  min-height: 60px;
+  font-weight: 700;
+  border-radius: var(--radius-guidance);
+  min-height: 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -724,9 +737,8 @@ body {
 }
 
 .btn-duration span.unit {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sync);
   color: var(--color-text-sub);
-  font-weight: 600;
 }
 
 .btn-duration.selected {
@@ -740,59 +752,54 @@ body {
 }
 
 .status-callout {
-  border-radius: var(--radius-md);
-  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-guidance);
+  padding: var(--space-10) var(--space-14);
   font-size: var(--font-size-body);
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: var(--space-8);
   background-color: var(--color-canvas-bg);
-  border: 1px solid var(--color-surface-border);
 }
 
 .status-callout.spraying {
   background-color: #E8F0FE;
-  border-color: #AECBFA;
   color: #1967D2;
 }
 
 .status-callout.success {
   background-color: var(--color-ready-bg);
-  border-color: #A8DAB5;
   color: var(--color-ready-text);
 }
 
-.btn-primary-spray {
+.btn-spray-action {
   background-color: var(--color-accent-orange);
   color: #FFFFFF;
-  font-size: var(--font-size-base);
-  font-weight: 800;
+  font-size: var(--font-size-card-title);
+  font-weight: 700;
   border: none;
-  border-radius: var(--radius-card);
-  min-height: 54px;
+  border-radius: var(--radius-guidance);
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-8);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
 }
 
-.btn-primary-spray svg {
-  width: 20px;
-  height: 20px;
+.btn-spray-action svg {
+  width: 18px;
+  height: 18px;
   stroke: #FFFFFF;
 }
 
-.btn-primary-spray:disabled {
+.btn-spray-action:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: #9AA0A6;
-  box-shadow: none;
 }
 
-/* Modal Dialog */
+/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -811,27 +818,26 @@ body {
 
 .modal-card {
   background-color: var(--color-surface-white);
-  border-radius: var(--radius-outer);
-  padding: var(--space-24);
-  max-width: 360px;
+  border-radius: var(--radius-card);
+  padding: var(--space-20);
+  max-width: 350px;
   width: 100%;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  gap: var(--space-14);
+  gap: var(--space-12);
   text-align: center;
 }
 
 .modal-actions {
   display: flex;
-  gap: var(--space-10);
-  margin-top: var(--space-6);
+  gap: var(--space-8);
+  margin-top: var(--space-4);
 }
 
 .btn-modal-cancel, .btn-modal-confirm {
   flex: 1;
-  min-height: 46px;
-  border-radius: var(--radius-md);
+  min-height: 44px;
+  border-radius: var(--radius-guidance);
   font-size: var(--font-size-body);
   font-weight: 700;
   border: none;
@@ -841,7 +847,6 @@ body {
 .btn-modal-cancel {
   background-color: var(--color-canvas-bg);
   color: var(--color-text-main);
-  border: 1px solid var(--color-surface-border);
 }
 
 .btn-modal-confirm {

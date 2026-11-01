@@ -2,16 +2,12 @@
  * ==============================================================================
  * FRUITY Q - USER INTERFACE & NAVIGATION LOGIC
  * ==============================================================================
- * Manages:
- * - Splash screen timeout (1.2 seconds)
- * - Navigation between Home, Sprinkling, Fruit Picking, Logistics
- * - Duration selector for Sprinkling (1 to 5 seconds)
- * - Confirmation dialog before triggering the spray
- * - Real-time robot ONLINE / OFFLINE pill status update
- * - Rover connection state ("Awaiting connection" / "Connected")
- * - Module Card States ("LOCKED" vs "READY")
- * - Reconnect notice banner visibility
- * - Fixed STOP button event handling & state updates
+ * Synchronized with Figma Frame 2:45:
+ * - Real-time robot status pill ("OFFLINE" vs "ONLINE")
+ * - Rover connection card heading & substatus driven by live connection
+ * - Module Card status badges ("LOCKED" vs "READY") & interactive state
+ * - Connection guidance notice card (auto hides when online)
+ * - Fixed STOP button event handling & ROS stop triggers
  * ==============================================================================
  */
 
@@ -28,7 +24,7 @@ const UI = {
     this.setupEmergencyStop();
     this.hookROSCallbacks();
 
-    // Initialize button & connection states
+    // Set initial connection state to OFFLINE
     this.updateOnlineStatus(false);
   },
 
@@ -85,7 +81,7 @@ const UI = {
     }
 
     // Back buttons
-    document.querySelectorAll(".btn-screen-back").forEach((btn) => {
+    document.querySelectorAll(".btn-back").forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-target") || "home-screen";
         this.navigateTo(target);
@@ -236,7 +232,7 @@ const UI = {
   },
 
   /**
-   * Update Status Pill, Rover Card, Module Chips & Locked state
+   * Update Status Pill, Rover Card, Module Badges & Locked state
    */
   updateOnlineStatus(isOnline) {
     this.isRobotOnline = isOnline;
@@ -246,46 +242,46 @@ const UI = {
     const statusText = document.getElementById("robot-status-text");
     if (pill && statusText) {
       if (isOnline) {
-        pill.className = "status-pill online";
+        pill.className = "global-connection-state online";
         statusText.innerText = "ONLINE";
       } else {
-        pill.className = "status-pill";
+        pill.className = "global-connection-state";
         statusText.innerText = "OFFLINE";
       }
     }
 
     // Rover Card Details
-    const roverHeading = document.getElementById("rover-status-heading");
-    const roverDesc = document.getElementById("rover-status-desc");
-    const roverFooterDot = document.getElementById("rover-footer-dot");
-    const roverFooterText = document.getElementById("rover-footer-text");
+    const roverStatus = document.getElementById("rover-status");
+    const roverSubstatus = document.getElementById("rover-substatus");
+    const connectionIndicator = document.getElementById("connection-indicator");
+    const connectionDetail = document.getElementById("connection-detail");
 
-    if (roverHeading && roverDesc && roverFooterDot && roverFooterText) {
+    if (roverStatus && roverSubstatus && connectionIndicator && connectionDetail) {
       if (isOnline) {
-        roverHeading.innerText = "Connected";
-        roverDesc.innerText = "Autonomous rover ready for operations";
-        roverFooterDot.className = "rover-footer-dot online";
-        roverFooterText.innerText = "Rover is connected";
+        roverStatus.innerText = "Connected";
+        roverSubstatus.innerText = "Autonomous rover ready for operations";
+        connectionIndicator.className = "connection-indicator online";
+        connectionDetail.innerText = "Rover is connected";
       } else {
-        roverHeading.innerText = "Awaiting connection";
-        roverDesc.innerText = "Connect to enable autonomous control";
-        roverFooterDot.className = "rover-footer-dot";
-        roverFooterText.innerText = "Rover is currently offline";
+        roverStatus.innerText = "Awaiting connection";
+        roverSubstatus.innerText = "Connect to enable autonomous control";
+        connectionIndicator.className = "connection-indicator";
+        connectionDetail.innerText = "Rover is currently offline";
       }
     }
 
-    // Reconnect notice banner
-    const noticeReconnect = document.getElementById("notice-reconnect");
-    if (noticeReconnect) {
-      noticeReconnect.style.display = isOnline ? "none" : "flex";
+    // Guidance Card
+    const guidanceCard = document.getElementById("guidance-card");
+    if (guidanceCard) {
+      guidanceCard.style.display = isOnline ? "none" : "flex";
     }
 
     // Module Cards Locked/Ready State
     const moduleCards = document.querySelectorAll(".module-card");
-    const chips = [
-      document.getElementById("chip-picking"),
-      document.getElementById("chip-sprinkling"),
-      document.getElementById("chip-logistics")
+    const badges = [
+      document.getElementById("badge-picking"),
+      document.getElementById("badge-sprinkling"),
+      document.getElementById("badge-logistics")
     ];
 
     moduleCards.forEach((card) => {
@@ -296,14 +292,14 @@ const UI = {
       }
     });
 
-    chips.forEach((chip) => {
-      if (!chip) return;
-      const label = chip.querySelector(".chip-label");
+    badges.forEach((badge) => {
+      if (!badge) return;
+      const label = badge.querySelector(".badge-label");
       if (isOnline) {
-        chip.className = "chip-state ready";
+        badge.className = "module-badge ready";
         if (label) label.innerText = "READY";
       } else {
-        chip.className = "chip-state";
+        badge.className = "module-badge";
         if (label) label.innerText = "LOCKED";
       }
     });
