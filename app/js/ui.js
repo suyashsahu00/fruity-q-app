@@ -315,17 +315,34 @@ const UI = {
       });
     });
 
-    // Arm Selector Chips
-    const armSelectBtns = document.querySelectorAll(".btn-arm-select");
-    armSelectBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        armSelectBtns.forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        this.activeArm = btn.getAttribute("data-arm") || "arm1";
+    // Dual Arm Activation State (Left zone or Right zone tap/drag automatically activates that arm)
+    const zoneArm1 = document.getElementById("zone-arm1");
+    const zoneArm2 = document.getElementById("zone-arm2");
+
+    const syncActiveArmUI = () => {
+      if (zoneArm1 && zoneArm2) {
+        zoneArm1.classList.toggle("is-active", this.activeArm === "arm1");
+        zoneArm2.classList.toggle("is-active", this.activeArm === "arm2");
+      }
+    };
+
+    if (zoneArm1) {
+      zoneArm1.addEventListener("pointerdown", () => {
+        this.activeArm = "arm1";
+        syncActiveArmUI();
+        updateGantryDisplay();
       });
-    });
+    }
+    if (zoneArm2) {
+      zoneArm2.addEventListener("pointerdown", () => {
+        this.activeArm = "arm2";
+        syncActiveArmUI();
+        updateGantryDisplay();
+      });
+    }
 
     const updateGantryDisplay = () => {
+      syncActiveArmUI();
       const readout = document.getElementById("gantry-coords-readout");
 
       // Arm 1 Elements
@@ -348,30 +365,32 @@ const UI = {
       const sY2 = this.gantry2Y >= 0 ? "+" : "";
 
       if (readout) {
-        readout.innerText = `A1: (${sX1}${this.gantry1X.toFixed(0)}, ${sY1}${this.gantry1Y.toFixed(0)}) | A2: (${sX2}${this.gantry2X.toFixed(0)}, ${sY2}${this.gantry2Y.toFixed(0)})`;
+        const a1Tag = this.activeArm === "arm1" ? "▶ ARM 1" : "ARM 1";
+        const a2Tag = this.activeArm === "arm2" ? "▶ ARM 2" : "ARM 2";
+        readout.innerText = `${a1Tag}: (${sX1}${this.gantry1X.toFixed(0)}, ${sY1}${this.gantry1Y.toFixed(0)}) | ${a2Tag}: (${sX2}${this.gantry2X.toFixed(0)}, ${sY2}${this.gantry2Y.toFixed(0)})`;
       }
 
-      // Update Arm 1 Visuals
+      // Update Arm 1 Visuals (Unified Carriage slides X, Crossbeam slides Y)
       if (beam1) {
         const transY1 = Math.max(-85, Math.min(85, -this.gantry1Y * 0.8));
         beam1.style.transform = `translateY(${transY1}px)`;
       }
       if (toolhead1) {
-        const transX1 = Math.max(-48, Math.min(48, this.gantry1X * 0.6));
-        toolhead1.style.transform = `translateX(calc(-50% + ${transX1}px))`;
+        const transX1 = Math.max(-45, Math.min(45, this.gantry1X * 0.55));
+        toolhead1.style.transform = `translate(calc(-50% + ${transX1}px), -50%)`;
       }
       if (coords1) coords1.innerText = `(${sX1}${this.gantry1X.toFixed(0)}, ${sY1}${this.gantry1Y.toFixed(0)})`;
       if (dimX1) dimX1.innerText = `← x1: ${sX1}${this.gantry1X.toFixed(0)} →`;
       if (dimY1) dimY1.innerText = `y1: ${sY1}${this.gantry1Y.toFixed(0)}`;
 
-      // Update Arm 2 Visuals
+      // Update Arm 2 Visuals (Unified Carriage slides X, Crossbeam slides Y)
       if (beam2) {
         const transY2 = Math.max(-85, Math.min(85, -this.gantry2Y * 0.8));
         beam2.style.transform = `translateY(${transY2}px)`;
       }
       if (toolhead2) {
-        const transX2 = Math.max(-48, Math.min(48, this.gantry2X * 0.6));
-        toolhead2.style.transform = `translateX(calc(-50% + ${transX2}px))`;
+        const transX2 = Math.max(-45, Math.min(45, this.gantry2X * 0.55));
+        toolhead2.style.transform = `translate(calc(-50% + ${transX2}px), -50%)`;
       }
       if (coords2) coords2.innerText = `(${sX2}${this.gantry2X.toFixed(0)}, ${sY2}${this.gantry2Y.toFixed(0)})`;
       if (dimX2) dimX2.innerText = `← x2: ${sX2}${this.gantry2X.toFixed(0)} →`;
@@ -397,17 +416,11 @@ const UI = {
         const rect = stage.getBoundingClientRect();
         const clickRelX = (e.clientX - rect.left) / rect.width;
 
-        // Determine which arm was grabbed (Left half = Arm 1, Right half = Arm 2)
-        if (this.activeArm === "both") {
-          draggedArm = "both";
-        } else {
-          draggedArm = clickRelX < 0.5 ? "arm1" : "arm2";
-          // Also visually sync the active selector
-          this.activeArm = draggedArm;
-          armSelectBtns.forEach((b) => {
-            b.classList.toggle("selected", b.getAttribute("data-arm") === draggedArm);
-          });
-        }
+        // Direct activation: touching/clicking left half activates Arm 1, right half activates Arm 2
+        draggedArm = clickRelX < 0.5 ? "arm1" : "arm2";
+        this.activeArm = draggedArm;
+        syncActiveArmUI();
+        updateGantryDisplay();
 
         isDragging = true;
         startPointerX = e.clientX;

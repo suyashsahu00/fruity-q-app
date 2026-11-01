@@ -522,25 +522,15 @@
       </div>
 
       <!-- Industrial Robotic Control Area (Single-Mast Robotic Arm matching user sketch) -->
-      <!-- Industrial Robotic Control Area (Dual Masts Side by Side) -->
+      <!-- Industrial Robotic Control Area (Dual Masts Side by Side - Unified Carriages) -->
       <section class="screen-card-panel gantry-panel">
         <div class="panel-header-row">
-          <span class="operations-title">DUAL ROBOTIC ARMS (SIDE BY SIDE)</span>
-          <span class="telemetry-pill" id="gantry-coords-readout">A1: (0, 0) | A2: (0, 0)</span>
+          <span class="operations-title">DUAL ROBOTIC ARMS (TAP ARM TO ACTIVATE)</span>
+          <span class="telemetry-pill" id="gantry-coords-readout">▶ ARM 1: (0, 0) | ARM 2: (0, 0)</span>
         </div>
 
-        <!-- Arm Selector Segment Controls -->
-        <div class="arm-selector-row">
-          <span class="operations-title" style="margin-bottom:0;">ACTIVE ARM:</span>
-          <div class="speed-chips">
-            <button type="button" class="btn-arm-select selected" data-arm="arm1" id="btn-select-arm1">ARM 1 (LEFT)</button>
-            <button type="button" class="btn-arm-select" data-arm="arm2" id="btn-select-arm2">ARM 2 (RIGHT)</button>
-            <button type="button" class="btn-arm-select" data-arm="both" id="btn-select-both">BOTH (SYNC)</button>
-          </div>
-        </div>
-
-        <!-- Dual-Mast Visual Work Envelope (Two Masts Side-by-Side, Both Draggable) -->
-        <div class="gantry-rig-stage dual-mast-stage" id="gantry-interactive-stage" title="Click or drag either arm with cursor">
+        <!-- Dual-Mast Visual Work Envelope (Two Masts Side-by-Side, Tap or Drag Either) -->
+        <div class="gantry-rig-stage dual-mast-stage" id="gantry-interactive-stage" title="Tap or drag either arm to move">
           <!-- Background Work Envelope Grid -->
           <div class="gantry-grid-overlay"></div>
 
@@ -550,11 +540,11 @@
           <!-- Drag Hint Badge -->
           <div class="gantry-drag-hint">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/><path d="m19 9 3 3-3 3"/><path d="m9 19 3 3 3-3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>
-            <span>DRAG EITHER ARM</span>
+            <span>TAP / DRAG EITHER ARM</span>
           </div>
 
           <!-- ================= LEFT ARM (ARM 01) ================= -->
-          <div class="arm-system-zone zone-left" id="zone-arm1">
+          <div class="arm-system-zone zone-left is-active" id="zone-arm1">
             <!-- Vertical Y-Axis Dimension Ruler & Arrow (Left Mast) -->
             <div class="gantry-dim-y dim-y-left">
               <span class="dim-label">Y1+</span>
@@ -580,29 +570,29 @@
               <span class="mast-label">MAST 01</span>
             </div>
 
-            <!-- Cross-Arm 1 Assembly -->
+            <!-- Cross-Arm 1 Assembly (Moves UP & DOWN along Mast 1 on Y-axis) -->
             <div class="cross-arm-assembly arm-1-assembly" id="gantry1-crossbeam">
+              <!-- Horizontal Boom Track -->
               <div class="cross-arm-boom boom-half">
                 <div class="arm-rail-groove"></div>
                 <div class="arm-dim-indicator" id="gantry1-dim-x-val">&larr; x1: 0 &rarr;</div>
               </div>
-              <div class="mast-slider-collar collar-compact">
-                <span class="collar-bolt top-left"></span>
-                <span class="collar-bolt top-right"></span>
-                <span class="collar-center-joint"></span>
-                <span class="collar-bolt btm-left"></span>
-                <span class="collar-bolt btm-right"></span>
-              </div>
-              <div class="gantry-toolhead toolhead-compact" id="gantry1-toolhead">
-                <div class="toolhead-carriage">
-                  <span class="toolhead-led"></span>
-                  <span class="toolhead-tag">ARM 1</span>
-                </div>
-                <div class="toolhead-gripper">
-                  <div class="gripper-finger left"></div>
-                  <div class="gripper-palm">
+
+              <!-- Unified Sliding Carriage (Green Box + Gripper + Red Dot Move Together on X-axis) -->
+              <div class="gantry-unified-carriage" id="gantry1-toolhead">
+                <div class="unified-carriage-box">
+                  <span class="collar-bolt top-left"></span>
+                  <span class="collar-bolt top-right"></span>
+                  <div class="collar-lens-housing">
                     <span class="target-laser-dot"></span>
                   </div>
+                  <span class="collar-bolt btm-left"></span>
+                  <span class="collar-bolt btm-right"></span>
+                  <span class="carriage-arm-tag">ARM 1</span>
+                </div>
+                <!-- Mechanical Gripper attached to carriage -->
+                <div class="carriage-gripper-mount">
+                  <div class="gripper-finger left"></div>
                   <div class="gripper-finger right"></div>
                 </div>
                 <div class="toolhead-coords" id="gantry1-coords-sub">(0, 0)</div>
@@ -626,29 +616,29 @@
               <span class="mast-label">MAST 02</span>
             </div>
 
-            <!-- Cross-Arm 2 Assembly -->
+            <!-- Cross-Arm 2 Assembly (Moves UP & DOWN along Mast 2 on Y-axis) -->
             <div class="cross-arm-assembly arm-2-assembly" id="gantry2-crossbeam">
+              <!-- Horizontal Boom Track -->
               <div class="cross-arm-boom boom-half">
                 <div class="arm-rail-groove"></div>
                 <div class="arm-dim-indicator" id="gantry2-dim-x-val">&larr; x2: 0 &rarr;</div>
               </div>
-              <div class="mast-slider-collar collar-compact">
-                <span class="collar-bolt top-left"></span>
-                <span class="collar-bolt top-right"></span>
-                <span class="collar-center-joint"></span>
-                <span class="collar-bolt btm-left"></span>
-                <span class="collar-bolt btm-right"></span>
-              </div>
-              <div class="gantry-toolhead toolhead-compact" id="gantry2-toolhead">
-                <div class="toolhead-carriage">
-                  <span class="toolhead-led"></span>
-                  <span class="toolhead-tag">ARM 2</span>
-                </div>
-                <div class="toolhead-gripper">
-                  <div class="gripper-finger left"></div>
-                  <div class="gripper-palm">
+
+              <!-- Unified Sliding Carriage (Green Box + Gripper + Red Dot Move Together on X-axis) -->
+              <div class="gantry-unified-carriage" id="gantry2-toolhead">
+                <div class="unified-carriage-box">
+                  <span class="collar-bolt top-left"></span>
+                  <span class="collar-bolt top-right"></span>
+                  <div class="collar-lens-housing">
                     <span class="target-laser-dot"></span>
                   </div>
+                  <span class="collar-bolt btm-left"></span>
+                  <span class="collar-bolt btm-right"></span>
+                  <span class="carriage-arm-tag">ARM 2</span>
+                </div>
+                <!-- Mechanical Gripper attached to carriage -->
+                <div class="carriage-gripper-mount">
+                  <div class="gripper-finger left"></div>
                   <div class="gripper-finger right"></div>
                 </div>
                 <div class="toolhead-coords" id="gantry2-coords-sub">(0, 0)</div>

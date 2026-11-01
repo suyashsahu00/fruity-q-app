@@ -1189,19 +1189,47 @@ svg {
   letter-spacing: 0.3px;
 }
 
-/* Left & Right Arm Zones */
+/* Left & Right Arm Zones (Direct tap / click switches active arm) */
 .arm-system-zone {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 50%;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  opacity: 0.65;
+}
+.arm-system-zone.is-active {
+  opacity: 1;
 }
 .arm-system-zone.zone-left {
   left: 0;
 }
 .arm-system-zone.zone-right {
   right: 0;
+}
+.arm-system-zone.is-active::after {
+  content: "ACTIVE";
+  position: absolute;
+  top: 10px;
+  background: #1B5E20;
+  color: #A5D6A7;
+  border: 1px solid #4CAF50;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+  pointer-events: none;
+  z-index: 12;
+}
+.arm-system-zone.zone-left.is-active::after {
+  right: 14px;
+}
+.arm-system-zone.zone-right.is-active::after {
+  left: 14px;
 }
 
 /* Vertical Y-Axis Dimension Rulers */
@@ -1403,30 +1431,39 @@ svg {
   white-space: nowrap;
 }
 
-/* Sliding Collars */
-.mast-slider-collar.collar-compact {
+/* Unified Draggable Carriage (Collar + Laser Dot + Gripper all move together on X-axis) */
+.gantry-unified-carriage {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 48px;
-  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.08s ease-out;
+}
+.gantry-unified-carriage:active,
+.gantry-unified-carriage.is-dragging {
+  cursor: grabbing !important;
+}
+
+.unified-carriage-box {
+  width: 44px;
+  height: 42px;
   background: linear-gradient(180deg, #2D4D36 0%, #1A3122 100%);
   border: 2px solid #81C784;
-  border-radius: 5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.7);
-  z-index: 7;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset 0 0 4px rgba(0,0,0,0.5);
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
-}
-.collar-center-joint {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #A5D6A7 0%, #388E3C 100%);
-  border: 1px solid #FFFFFF;
+  gap: 2px;
 }
 .collar-bolt {
   position: absolute;
@@ -1440,93 +1477,56 @@ svg {
 .collar-bolt.btm-left { bottom: 3px; left: 3px; }
 .collar-bolt.btm-right { bottom: 3px; right: 3px; }
 
-/* Toolheads */
-.gantry-toolhead.toolhead-compact {
-  position: absolute;
-  left: 50%;
-  top: -8px;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 10;
-  pointer-events: auto;
-  cursor: grab;
-  transition: transform 0.08s ease-out;
-  touch-action: none;
-}
-.gantry-toolhead.toolhead-compact:active,
-.gantry-toolhead.toolhead-compact.is-dragging {
-  cursor: grabbing !important;
-}
-
-.toolhead-carriage {
-  background: #1B5E20;
-  border: 1.5px solid #66BB6A;
-  padding: 1px 6px;
-  border-radius: 4px;
+.collar-lens-housing {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #388E3C 0%, #1B5E20 100%);
+  border: 1.5px solid #A5D6A7;
   display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.7);
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
 }
-.toolhead-led {
+.collar-lens-housing .target-laser-dot {
   width: 5px;
   height: 5px;
-  background-color: #00E676;
+  background: #FF1744;
   border-radius: 50%;
-  box-shadow: 0 0 5px #00E676;
+  box-shadow: 0 0 6px #FF1744, 0 0 10px #FF1744;
 }
-.toolhead-tag {
+.carriage-arm-tag {
   font-size: 8px;
   font-weight: 800;
-  color: #FFFFFF;
+  color: #C8E6C9;
   letter-spacing: 0.5px;
 }
-.toolhead-gripper {
+
+.carriage-gripper-mount {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  margin-top: 1px;
+  gap: 3px;
+  margin-top: -2px;
 }
-.gripper-palm {
-  width: 14px;
-  height: 10px;
-  background: #263238;
-  border: 1px solid #546E7A;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-.target-laser-dot {
+.carriage-gripper-mount .gripper-finger {
   width: 3px;
-  height: 3px;
-  background: #FF1744;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #FF1744;
-}
-.gripper-finger {
-  width: 3px;
-  height: 16px;
+  height: 14px;
   background: linear-gradient(180deg, #ECEFF1 0%, #B0BEC5 100%);
   border: 1px solid #78909C;
   border-radius: 1px;
 }
-.gripper-finger.left {
+.carriage-gripper-mount .gripper-finger.left {
   border-top-left-radius: 2px;
   transform: rotate(-12deg);
   transform-origin: top right;
-  margin-right: -2px;
 }
-.gripper-finger.right {
+.carriage-gripper-mount .gripper-finger.right {
   border-top-right-radius: 2px;
   transform: rotate(12deg);
   transform-origin: top left;
-  margin-left: -2px;
 }
+
 .toolhead-coords {
   margin-top: 2px;
   background: rgba(10, 20, 14, 0.95);
