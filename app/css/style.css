@@ -398,6 +398,11 @@ body {
   flex-shrink: 0;
   white-space: nowrap;
 }
+/* All SVGs inherit currentColor by default unless overridden */
+svg {
+  stroke: currentColor;
+}
+
 .sub-status-pill.online {
   background-color: var(--color-status-online-bg);
   color: var(--color-status-online-text);
@@ -405,21 +410,37 @@ body {
 
 .btn-back {
   background: var(--color-surface-white);
-  border: 1px solid var(--color-surface-border);
+  border: 1.5px solid var(--color-surface-border);
   cursor: pointer;
-  width: 2.5rem;
-  height: 2.5rem;
-  min-width: 2.5rem;
-  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-inner);
   color: var(--color-text-main);
-  transition: background 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
   flex-shrink: 0;
+  padding: 0;
 }
-.btn-back:active { background-color: var(--color-module-icon-bg); }
-.btn-back svg { width: 1.125rem; height: 1.125rem; }
+.btn-back:hover {
+  background-color: var(--color-module-icon-bg);
+  border-color: var(--color-primary-medium);
+}
+.btn-back:active {
+  background-color: var(--color-module-icon-bg);
+  transform: scale(0.95);
+}
+.btn-back svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: var(--color-text-main) !important;
+  stroke-width: 2.5 !important;
+  fill: none !important;
+  display: block;
+}
 
 /* Offline notice banner */
 .offline-notice {
@@ -1051,7 +1072,7 @@ body {
 .step-node.completed .step-label { color: var(--color-module-icon-glyph); }
 
 /* ==========================================================================
-   MANUAL MOVEMENT (ROBOTIC GANTRY INTERFACE)
+   MANUAL MOVEMENT (DUAL-COLUMN ROBOTIC GANTRY RIG - SKETCH SPEC)
    ========================================================================== */
 .gantry-panel {
   gap: var(--space-10);
@@ -1061,69 +1082,337 @@ body {
   font-weight: 700;
   color: var(--color-module-icon-glyph);
   background-color: var(--color-module-icon-bg);
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: var(--radius-badge);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
 }
 .telemetry-pill.live {
   background-color: #E8F5E9;
   color: #2E7D32;
 }
 
-.gantry-schematic-view {
+/* Outer Rig Stage (Enclosed machine envelope) */
+.gantry-rig-stage {
+  position: relative;
+  width: 100%;
+  height: 270px;
+  background: radial-gradient(circle at 50% 50%, #1A3123 0%, #101E15 100%);
+  border: 1.5px solid #2B4734;
+  border-radius: var(--radius-inner);
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* Grid overlay for precision scale */
+.gantry-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+/* Y-Axis Dimension Line on Left (Matching Sketch: y ↑ ↓) */
+.gantry-dim-y {
+  position: absolute;
+  left: 8px;
+  top: 14px;
+  bottom: 26px;
+  width: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #172B1F;
-  border-radius: var(--radius-inner);
-  padding: var(--space-12) var(--space-8);
-  color: #FFFFFF;
-}
-.gantry-middle-row {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  width: 100%;
-  gap: var(--space-8);
+  z-index: 8;
+  pointer-events: none;
 }
-.gantry-axis-indicator {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-badge);
+.gantry-dim-y .dim-label {
+  font-size: 10px;
   font-weight: 800;
-  color: #C2D6C2;
+  color: #A5D6A7;
   letter-spacing: 0.5px;
 }
-.gantry-crosshair-track {
+.dim-line-y {
   flex: 1;
-  height: 3.5rem;
-  border: 1px dashed rgba(194, 214, 194, 0.35);
-  border-radius: var(--radius-inner);
+  width: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(165, 214, 167, 0.7),
+    rgba(165, 214, 167, 0.7) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  margin: 4px 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.dim-line-y .dim-text {
+  background: #101E15;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #C8E6C9;
+  border-radius: 3px;
+  border: 1px solid rgba(165, 214, 167, 0.4);
+  font-style: italic;
+}
+
+/* Dual Vertical Pillar Rails (Left & Right Steel Uprights) */
+.gantry-pillar {
+  position: absolute;
+  top: 12px;
+  bottom: 26px;
+  width: 28px;
+  background: linear-gradient(90deg, #2A4532 0%, #3B5F45 40%, #1F3325 100%);
+  border: 1.5px solid #4B7858;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 3;
+}
+.gantry-pillar.pillar-left {
+  left: 40px;
+}
+.gantry-pillar.pillar-right {
+  right: 40px;
+}
+.pillar-cap {
+  width: 100%;
+  height: 8px;
+  background: #5A8E6A;
+  border-radius: 2px;
+}
+.pillar-cap.top { border-bottom: 1px solid #1A2E20; }
+.pillar-cap.bottom { border-top: 1px solid #1A2E20; }
+.pillar-track-slot {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 11px;
+  width: 6px;
+  background: #0B160F;
+  border-left: 1px solid #18281D;
+  border-right: 1px solid #4B7858;
+  border-radius: 2px;
+}
+.pillar-ticks {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  right: 2px;
+  width: 4px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.3),
+    rgba(255,255,255,0.3) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+}
+.pillar-tag {
+  position: absolute;
+  bottom: -18px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #7CA888;
+  letter-spacing: 0.5px;
+}
+
+/* Horizontal Crossbeam Assembly (Moves Up and Down Y-axis across both pillars) */
+.gantry-crossbeam-assembly {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  top: 110px;
+  height: 44px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: transform 0.1s ease-out;
+}
+
+/* Sleeves sliding along vertical pillars */
+.beam-sleeve {
+  width: 32px;
+  height: 40px;
+  background: linear-gradient(180deg, #375940 0%, #203527 100%);
+  border: 1.5px solid #81C784;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 7;
+}
+.beam-sleeve::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #A5D6A7;
+  border-radius: 50%;
+}
+
+/* Horizontal bridge beam between the two pillars */
+.beam-bar {
+  flex: 1;
+  height: 22px;
+  background: linear-gradient(180deg, #446C4E 0%, #294432 100%);
+  border-top: 1.5px solid #A5D6A7;
+  border-bottom: 1.5px solid #1B2F22;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+  margin: 0 -4px;
+  z-index: 6;
+}
+.beam-guide-rail {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 4px;
+  background: #0E1A12;
+  border-top: 1px solid #1E3325;
+  border-bottom: 1px solid #66BB6A;
+  border-radius: 2px;
+}
+.beam-dim-x {
+  position: absolute;
+  top: -16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(16, 30, 21, 0.9);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(165, 214, 167, 0.4);
+  color: #C8E6C9;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Robotic Hand / Gripper Toolhead (Slides horizontally on the crossbeam) */
+.gantry-toolhead {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: grab;
+  transition: transform 0.1s ease-out;
+}
+.toolhead-carriage {
+  background: #1B5E20;
+  border: 1.5px solid #66BB6A;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+}
+.toolhead-led {
+  width: 6px;
+  height: 6px;
+  background-color: #00E676;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #00E676;
+}
+.toolhead-tag {
+  font-size: 9px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.5px;
+}
+.toolhead-gripper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 1px;
+}
+.gripper-palm {
+  width: 16px;
+  height: 12px;
+  background: #263238;
+  border: 1px solid #546E7A;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  background: radial-gradient(circle, rgba(48, 77, 56, 0.6) 0%, transparent 70%);
+  z-index: 2;
 }
-.gantry-hand-block {
+.target-laser-dot {
+  width: 4px;
+  height: 4px;
+  background: #FF1744;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #FF1744;
+}
+.gripper-finger {
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, #ECEFF1 0%, #B0BEC5 100%);
+  border: 1px solid #78909C;
+  border-radius: 1px;
+}
+.gripper-finger.left {
+  border-top-left-radius: 3px;
+  transform: rotate(-12deg);
+  transform-origin: top right;
+  margin-right: -2px;
+}
+.gripper-finger.right {
+  border-top-right-radius: 3px;
+  transform: rotate(12deg);
+  transform-origin: top left;
+  margin-left: -2px;
+}
+.toolhead-coords {
+  margin-top: 2px;
+  background: rgba(10, 20, 14, 0.9);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #A5D6A7;
+  border: 0.5px solid rgba(165, 214, 167, 0.3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bottom X-Limits Dimension Bar */
+.gantry-dim-x-bottom {
+  position: absolute;
+  bottom: 6px;
+  left: 40px;
+  right: 40px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  padding: 0.35rem 0.75rem;
-  background-color: #295C3B;
-  border: 1.5px solid #4CAF50;
-  border-radius: var(--radius-badge);
-  box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
-}
-.hand-label {
-  font-size: var(--font-size-caption);
-  font-weight: 800;
-  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  color: #7CA888;
   letter-spacing: 0.5px;
-}
-.hand-pos-sub {
-  font-size: var(--font-size-sync);
-  color: #C7D6C7;
+  pointer-events: none;
 }
 
 /* 4 Machine Movement Direction Buttons */
@@ -1151,6 +1440,8 @@ body {
   color: var(--color-text-main);
   transition: all 0.1s ease;
   min-height: 3.25rem;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .btn-gantry-move:active,
 .btn-gantry-move.active-held {
@@ -1158,6 +1449,9 @@ body {
   border-color: var(--color-accent-orange);
   color: #FFFFFF;
   transform: scale(0.97);
+}
+.btn-gantry-move svg {
+  stroke: currentColor;
 }
 .gantry-btn-label {
   font-size: var(--font-size-body);

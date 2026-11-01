@@ -298,7 +298,7 @@ const UI = {
       });
     }
 
-    // --- Screen 5: Manual Movement (Industrial Robotic Gantry XY) ---
+    // --- Screen 5: Manual Movement (Dual-Column Robotic Gantry Rig - Sketch Spec) ---
     const stepChips = document.querySelectorAll(".gantry-panel .btn-speed");
     stepChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -311,37 +311,74 @@ const UI = {
     const updateGantryDisplay = () => {
       const readout = document.getElementById("gantry-coords-readout");
       const posSub = document.getElementById("gantry-hand-pos-sub");
-      const coordStr = `X: ${this.gantryX.toFixed(1)} mm | Y: ${this.gantryY.toFixed(1)} mm`;
-      if (readout) readout.innerText = coordStr;
-      if (posSub) posSub.innerText = `(${this.gantryX.toFixed(0)}, ${this.gantryY.toFixed(0)})`;
+      const dimX = document.getElementById("gantry-dim-x-val");
+      const dimY = document.getElementById("gantry-dim-y-val");
 
-      const handEl = document.getElementById("gantry-hand-display");
-      if (handEl) {
-        // Clamp translate visually
-        const transX = Math.max(-40, Math.min(40, this.gantryX * 0.4));
-        const transY = Math.max(-20, Math.min(20, -this.gantryY * 0.2));
-        handEl.style.transform = `translate(${transX}px, ${transY}px)`;
+      const signX = this.gantryX > 0 ? "+" : "";
+      const signY = this.gantryY > 0 ? "+" : "";
+      const coordStr = `X: ${signX}${this.gantryX.toFixed(1)} mm | Y: ${signY}${this.gantryY.toFixed(1)} mm`;
+      if (readout) readout.innerText = coordStr;
+      if (posSub) posSub.innerText = `(${signX}${this.gantryX.toFixed(0)}, ${signY}${this.gantryY.toFixed(0)})`;
+      if (dimX) dimX.innerText = `← x: ${signX}${this.gantryX.toFixed(0)} mm →`;
+      if (dimY) dimY.innerText = `y: ${signY}${this.gantryY.toFixed(0)}`;
+
+      // Dual-pillar physical movement:
+      // Y-axis translates the horizontal crossbeam up and down across both vertical pillars
+      const crossbeamEl = document.getElementById("gantry-crossbeam");
+      if (crossbeamEl) {
+        // Clamp Y visual translation (-80px up to +80px down)
+        const transY = Math.max(-80, Math.min(80, -this.gantryY * 0.7));
+        crossbeamEl.style.transform = `translateY(${transY}px)`;
+      }
+
+      // X-axis translates the robotic toolhead left and right along the horizontal crossbeam
+      const toolheadEl = document.getElementById("gantry-toolhead");
+      if (toolheadEl) {
+        // Clamp X visual translation (-90px left to +90px right)
+        const transX = Math.max(-90, Math.min(90, this.gantryX * 0.6));
+        toolheadEl.style.transform = `translateX(calc(-50% + ${transX}px))`;
       }
     };
 
+    // Both single tap step AND hold-to-jog support
     document.querySelectorAll(".btn-gantry-move").forEach((btn) => {
       const axis = btn.getAttribute("data-axis");
       const dir = parseFloat(btn.getAttribute("data-dir") || "1");
+      let jogTimer = null;
 
-      const applyMove = () => {
+      const performStep = () => {
         if (!this.isRobotOnline && !CONFIG.MOCK_MODE) {
-          alert("Cannot move gantry: Rover is OFFLINE!");
           return;
         }
         if (axis === "x") {
-          this.gantryX = Math.max(-200, Math.min(200, this.gantryX + dir * this.gantryStep));
+          this.gantryX = Math.max(-150, Math.min(150, this.gantryX + dir * this.gantryStep));
         } else if (axis === "y") {
-          this.gantryY = Math.max(-200, Math.min(200, this.gantryY + dir * this.gantryStep));
+          this.gantryY = Math.max(-100, Math.min(100, this.gantryY + dir * this.gantryStep));
         }
         updateGantryDisplay();
       };
 
-      btn.addEventListener("click", applyMove);
+      const startJog = (e) => {
+        e.preventDefault();
+        btn.classList.add("active-held");
+        performStep();
+        if (jogTimer) clearInterval(jogTimer);
+        jogTimer = setInterval(performStep, 130);
+      };
+
+      const stopJog = (e) => {
+        btn.classList.remove("active-held");
+        if (jogTimer) {
+          clearInterval(jogTimer);
+          jogTimer = null;
+        }
+      };
+
+      btn.addEventListener("pointerdown", startJog);
+      btn.addEventListener("pointerup", stopJog);
+      btn.addEventListener("pointerleave", stopJog);
+      btn.addEventListener("pointercancel", stopJog);
+      btn.addEventListener("contextmenu", (e) => e.preventDefault());
     });
 
     const btnGantryZero = document.getElementById("btn-gantry-zero");
@@ -352,6 +389,9 @@ const UI = {
         updateGantryDisplay();
       });
     }
+
+    // Initialize display positions
+    updateGantryDisplay();
 
     // --- Screen 6: Automatic Picking (AI Camera Detection) ---
     const fruitCards = document.querySelectorAll(".fruit-choice-card");
