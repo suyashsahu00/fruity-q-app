@@ -19,6 +19,7 @@
 
   <!-- DEMO MODE BANNER (Visible when CONFIG.MOCK_MODE is ON) -->
   <div id="demo-banner">
+    <!-- Lucide: alert-octagon -->
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
     <span>DEMO MODE ACTIVE (Simulated Robot)</span>
   </div>
@@ -33,29 +34,36 @@
     <div class="splash-loader"></div>
   </div>
 
-  <!-- MAIN 390PX VIEWPORT CONTAINER (Matches Figma Frame 2:45) -->
+  <!-- MAIN VIEWPORT CONTAINER -->
   <div class="mobile-canvas">
 
-    <!-- APP HEADER -->
-    <header class="app-header">
+    <!-- APP HEADER (visible on Home screen) -->
+    <header class="app-header" id="home-header">
       <div class="brand">
         <div class="fruit-q-mark">
-          <!-- Flower/Fruit brand logo mark with small orange accent dot -->
+          <!-- Flower/Fruit brand logo mark -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M16 8a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8h-1a4 4 0 0 0-4 4Z"/><path d="M12 14a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0v-1a4 4 0 0 0-4-4Z"/><path d="M4 12a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8H8a4 4 0 0 0-4 4Z"/></svg>
           <span class="brand-accent-dot"></span>
         </div>
         <h1 class="app-name">Fruity Q</h1>
       </div>
 
-      <!-- Global Connection State Pill (Offline / Online) -->
-      <div id="robot-status-pill" class="global-connection-state">
-        <span class="status-dot"></span>
-        <span id="robot-status-text">OFFLINE</span>
+      <div class="header-right-group">
+        <!-- Settings gear icon button -->
+        <button type="button" id="btn-open-settings" class="btn-icon-header" aria-label="Settings">
+          <!-- Lucide: settings -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <!-- Global Connection State Pill -->
+        <div id="robot-status-pill" class="global-connection-state">
+          <span class="status-dot"></span>
+          <span id="robot-status-text">OFFLINE</span>
+        </div>
       </div>
     </header>
 
     <!-- ====================================================================
-         1. HOME SCREEN (Figma Frame 2:45)
+         1. HOME SCREEN
          ==================================================================== -->
     <main id="home-screen" class="screen active">
       
@@ -65,7 +73,7 @@
         <p class="context-text">Manage your rover and field operations</p>
       </div>
 
-      <!-- Rover Connection Card (Figma node 'Rover connection card') -->
+      <!-- Rover Connection Card -->
       <section class="rover-connection-card">
         <div class="rover-card-heading">
           <span class="eyebrow">ROVER CONNECTION</span>
@@ -101,14 +109,15 @@
       <!-- Module Cards Container -->
       <div class="cards-container">
         
-        <!-- 1. Fruit Picking Card (Apple Lucide Icon) -->
-        <div id="card-nav-picking" class="module-card locked">
+        <!-- 1. Fruit Picking Card -->
+        <div id="card-nav-picking" class="module-card locked" role="button" tabindex="0" aria-label="Open Fruit Picking">
           <div class="module-icon-container">
+            <!-- Lucide: apple -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
           </div>
           <div class="module-label-group">
             <h3 class="module-title">Fruit Picking</h3>
-            <p class="module-description">Safety checks, alignment & robotic harvesting</p>
+            <p class="module-description">Safety checks, alignment &amp; robotic harvesting</p>
           </div>
           <span class="module-badge" id="badge-picking">
             <span class="dot"></span>
@@ -116,9 +125,10 @@
           </span>
         </div>
 
-        <!-- 2. Sprinkling Card (Droplets Lucide Icon) -->
-        <div id="card-nav-sprinkling" class="module-card locked">
+        <!-- 2. Sprinkling Card -->
+        <div id="card-nav-sprinkling" class="module-card locked" role="button" tabindex="0" aria-label="Open Sprinkling">
           <div class="module-icon-container">
+            <!-- Lucide: droplets -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>
           </div>
           <div class="module-label-group">
@@ -131,14 +141,15 @@
           </span>
         </div>
 
-        <!-- 3. Logistics Card (Route/Arrows Lucide Icon) -->
-        <div id="card-nav-logistics" class="module-card locked">
+        <!-- 3. Logistics Card -->
+        <div id="card-nav-logistics" class="module-card locked" role="button" tabindex="0" aria-label="Open Logistics">
           <div class="module-icon-container">
+            <!-- Lucide: route -->
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
           </div>
           <div class="module-label-group">
             <h3 class="module-title">Logistics</h3>
-            <p class="module-description">Follow-me mode & manual directional control</p>
+            <p class="module-description">Follow-me mode &amp; manual directional control</p>
           </div>
           <span class="module-badge" id="badge-logistics">
             <span class="dot"></span>
@@ -148,7 +159,7 @@
 
       </div>
 
-      <!-- Connection Guidance Card (Figma node 'Connection guidance card') -->
+      <!-- Connection Guidance Card (hidden when online) -->
       <div class="connection-guidance-card" id="guidance-card">
         <div class="connection-guidance-title">Reconnect to continue</div>
         <div class="connection-guidance-body">Check rover power, Wi-Fi and device pairing.</div>
@@ -160,20 +171,33 @@
          2. FRUIT PICKING SCREEN
          ==================================================================== -->
     <main id="picking-screen" class="screen">
+      <!-- Sub-header: back arrow + title + status pill -->
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          <!-- Lucide: arrow-left -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="greeting">Fruit Picking</h2>
+        <h2 class="screen-title">Fruit Picking</h2>
+        <div class="sub-status-pill" id="picking-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
       </div>
 
-      <!-- Step 1: Pre-start Checklist Panel -->
+      <!-- "Robot not connected" notice (shown when offline) -->
+      <div class="offline-notice" id="picking-offline-notice">
+        <!-- Lucide: wifi-off -->
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+        <span>Robot not connected — actions disabled</span>
+      </div>
+
+      <!-- State A: Pre-start Checklist Panel -->
       <section class="screen-card-panel" id="checklist-panel">
         <div class="operations-title">PRE-START SAFETY CHECKLIST</div>
         <div class="checklist-container">
           <label class="checklist-item">
             <input type="checkbox" id="check-gripper" class="safety-check">
-            <span class="checklist-label">Gripper clear & homed</span>
+            <span class="checklist-label">Gripper clear &amp; homed</span>
           </label>
           <label class="checklist-item">
             <input type="checkbox" id="check-area" class="safety-check">
@@ -181,21 +205,22 @@
           </label>
           <label class="checklist-item">
             <input type="checkbox" id="check-battery" class="safety-check">
-            <span class="checklist-label">Battery level OK (>25%)</span>
+            <span class="checklist-label">Battery level OK (&gt;25%)</span>
           </label>
           <label class="checklist-item">
             <input type="checkbox" id="check-camera" class="safety-check">
-            <span class="checklist-label">Camera feed & depth OK</span>
+            <span class="checklist-label">Camera feed &amp; depth OK</span>
           </label>
         </div>
 
         <button type="button" id="btn-start-picking" class="btn-action-primary" disabled>
+          <!-- Lucide: play -->
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-          <span>START HARVESTING</span>
+          <span>START PICKING</span>
         </button>
       </section>
 
-      <!-- Step 2: Live Status-Driven Step Tracker Panel -->
+      <!-- State B: Live Status-Driven Step Tracker Panel -->
       <section class="screen-card-panel" id="tracker-panel" style="display: none;">
         <div class="operations-title">HARVESTING PROGRESS</div>
         
@@ -228,12 +253,43 @@
               <span class="step-label">Picked</span>
             </div>
           </div>
+
+          <!-- Optional fruit distance (shown only if PICKING.DISTANCE_TOPIC is configured) -->
+          <div class="fruit-distance-row" id="fruit-distance-row" style="display:none;">
+            <span class="context-text">Fruit distance:</span>
+            <span class="distance-value" id="fruit-distance-value">—</span>
+          </div>
         </div>
 
         <button type="button" id="btn-cancel-picking" class="btn-action-cancel">
+          <!-- Lucide: x-circle -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></svg>
           <span>CANCEL HARVEST</span>
         </button>
+      </section>
+
+      <!-- State C: Result Panel (shown after Picked or Timed Out) -->
+      <section class="screen-card-panel" id="result-panel" style="display: none;">
+        <div class="result-icon-area" id="result-icon-area">
+          <!-- Icon changes: check or x -->
+        </div>
+        <div class="result-headline" id="result-headline">Picked ✓</div>
+        <div class="result-session-counter">
+          Picked this session: <strong id="session-pick-count">0</strong>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" id="btn-pick-another" class="btn-action-primary">
+            <!-- Lucide: apple -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
+            <span>PICK ANOTHER</span>
+          </button>
+          <button type="button" id="btn-back-home-result" class="btn-action-secondary">
+            <!-- Lucide: arrow-left -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>BACK TO HOME</span>
+          </button>
+        </div>
       </section>
     </main>
 
@@ -243,21 +299,43 @@
     <main id="sprinkling-screen" class="screen">
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="greeting">Sprinkling Control</h2>
+        <h2 class="screen-title">Sprinkling Control</h2>
+        <div class="sub-status-pill" id="sprinkling-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- "Robot not connected" notice -->
+      <div class="offline-notice" id="sprinkling-offline-notice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+        <span>Robot not connected — actions disabled</span>
       </div>
 
       <div class="screen-card-panel">
         <div class="operations-title">SELECT SPRAY DURATION</div>
         <div id="duration-selector-container" class="duration-selector"></div>
 
+        <!-- Countdown Ring (shown while spraying) -->
+        <div class="spray-countdown-wrapper" id="spray-countdown-wrapper" style="display:none;">
+          <svg class="spray-ring" viewBox="0 0 72 72" aria-hidden="true">
+            <circle class="spray-ring-bg" cx="36" cy="36" r="30"/>
+            <circle class="spray-ring-fg" id="spray-ring-fg" cx="36" cy="36" r="30"/>
+          </svg>
+          <span class="spray-countdown-number" id="spray-countdown-number">5</span>
+        </div>
+
+        <!-- Feedback callout -->
         <div id="spray-feedback" class="status-callout">
+          <!-- Lucide: droplets -->
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
           <span id="spray-feedback-text">Ready to spray</span>
         </div>
 
         <button type="button" id="btn-trigger-spray" class="btn-action-primary">
+          <!-- Lucide: droplets -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/></svg>
           <span>TRIGGER SPRAY</span>
         </button>
@@ -270,9 +348,19 @@
     <main id="logistics-screen" class="screen">
       <div class="screen-sub-header">
         <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </button>
-        <h2 class="greeting">Logistics Control</h2>
+        <h2 class="screen-title">Logistics Control</h2>
+        <div class="sub-status-pill" id="logistics-status-pill">
+          <span class="status-dot"></span>
+          <span class="sub-status-text">OFFLINE</span>
+        </div>
+      </div>
+
+      <!-- "Robot not connected" notice -->
+      <div class="offline-notice" id="logistics-offline-notice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+        <span>Robot not connected — actions disabled</span>
       </div>
 
       <div class="screen-card-panel">
@@ -282,51 +370,145 @@
             <span class="follow-me-title">Follow-Me Mode</span>
             <span class="follow-me-sub">Autonomous person tracking</span>
           </div>
-          <label class="switch">
+          <label class="switch" aria-label="Follow-Me Mode">
             <input type="checkbox" id="toggle-follow-me">
             <span class="slider"></span>
           </label>
         </div>
 
+        <!-- Speed Selector -->
+        <div class="speed-selector-row">
+          <span class="operations-title" style="margin-bottom:0;">SPEED</span>
+          <div class="speed-chips">
+            <button type="button" class="btn-speed selected" id="btn-speed-slow" data-speed="slow">
+              Slow
+            </button>
+            <button type="button" class="btn-speed" id="btn-speed-medium" data-speed="medium">
+              Medium
+            </button>
+          </div>
+        </div>
+
         <!-- Directional D-Pad (10 Hz Teleop, hold-to-move) -->
-        <div class="operations-title" style="margin-top: 6px;">MANUAL ROVER DIRECTION (HOLD TO MOVE)</div>
-        <div class="teleop-dpad-container">
+        <div class="operations-title" style="margin-top: 0.5rem;">MANUAL ROVER DIRECTION (HOLD TO MOVE)</div>
+        <div class="teleop-dpad-container" id="teleop-dpad">
           <!-- Up / Forward -->
           <button type="button" class="btn-teleop" id="btn-move-forward" data-linear="1" data-angular="0" aria-label="Forward">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            <!-- Lucide: arrow-up -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
           </button>
 
           <!-- Middle Row: Left, Center Spacer, Right -->
           <div class="dpad-row">
             <button type="button" class="btn-teleop" id="btn-move-left" data-linear="0" data-angular="1" aria-label="Turn Left">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              <!-- Lucide: arrow-left -->
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
             </button>
             <div class="dpad-center-spacer"></div>
             <button type="button" class="btn-teleop" id="btn-move-right" data-linear="0" data-angular="-1" aria-label="Turn Right">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <!-- Lucide: arrow-right -->
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
           </div>
 
           <!-- Down / Backward -->
           <button type="button" class="btn-teleop" id="btn-move-backward" data-linear="-1" data-angular="0" aria-label="Backward">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <!-- Lucide: arrow-down -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
           </button>
         </div>
 
-        <div class="context-text" style="text-align: center; font-size: 11px;">
-          Commands publish at 10 Hz while held down. Releasing immediately stops rover.
+        <!-- Follow mode info notice -->
+        <div class="follow-active-notice" id="follow-active-notice" style="display:none;">
+          <!-- Lucide: info -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>Robot stops if connection is lost.</span>
         </div>
+
+        <p class="context-text" style="text-align: center; font-size: 0.6875rem; margin-top: 0.5rem;">
+          Commands publish at 10 Hz while held down. Releasing immediately stops rover.
+        </p>
       </div>
     </main>
 
-  </div>
+    <!-- ====================================================================
+         5. SETTINGS SCREEN
+         ==================================================================== -->
+    <main id="settings-screen" class="screen">
+      <div class="screen-sub-header">
+        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </button>
+        <h2 class="screen-title">Settings</h2>
+        <div style="width: 2.75rem;"></div><!-- spacer to center title -->
+      </div>
+
+      <div class="screen-card-panel">
+        <div class="operations-title">ROBOT CONNECTION</div>
+
+        <div class="settings-field-group">
+          <label class="settings-label" for="settings-robot-ip">Robot IP Address</label>
+          <input
+            type="text"
+            id="settings-robot-ip"
+            class="settings-input"
+            placeholder="e.g. 192.168.1.100"
+            inputmode="url"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <p class="settings-hint">Enter the IP shown in your rover's WiFi setup page.</p>
+        </div>
+
+        <div class="settings-field-group">
+          <label class="settings-label" for="settings-robot-port">ROS Bridge Port</label>
+          <input
+            type="number"
+            id="settings-robot-port"
+            class="settings-input"
+            placeholder="9090"
+            min="1"
+            max="65535"
+            inputmode="numeric"
+          >
+        </div>
+
+        <button type="button" id="btn-settings-connect" class="btn-action-primary">
+          <!-- Lucide: wifi -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>
+          <span>CONNECT</span>
+        </button>
+      </div>
+
+      <div class="screen-card-panel">
+        <div class="operations-title">TEST / DEMO</div>
+
+        <div class="settings-toggle-row">
+          <div class="settings-toggle-info">
+            <span class="follow-me-title">Mock Mode (Demo)</span>
+            <span class="follow-me-sub">Simulates robot — no hardware needed</span>
+          </div>
+          <label class="switch" aria-label="Toggle Mock Mode">
+            <input type="checkbox" id="settings-mock-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="settings-hint" style="margin-top: 0.5rem;">
+          Changing Mock Mode will reload the page to apply.
+        </p>
+      </div>
+
+      <div class="settings-version-row">Fruity Q · v1.0.0</div>
+    </main>
+
+  </div><!-- end .mobile-canvas -->
 
   <!-- ======================================================================
        CONFIRMATION MODAL FOR DANGEROUS ACTIONS (Spraying & Follow-Me)
        ====================================================================== -->
-  <div id="action-confirm-modal" class="modal-backdrop">
+  <div id="action-confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-card">
-      <h3 class="greeting" id="confirm-modal-title" style="font-size: 18px;">Confirm Action</h3>
+      <h3 class="greeting" id="confirm-modal-title" style="font-size: 1.125rem;">Confirm Action</h3>
       <p class="module-description" id="confirm-modal-body">
         Ensure all personnel are clear of the path.
       </p>
@@ -338,10 +520,11 @@
   </div>
 
   <!-- ======================================================================
-       PERSISTENT EMERGENCY STOP BAR (Exact Figma design)
+       PERSISTENT EMERGENCY STOP BAR (Always visible)
        ====================================================================== -->
   <footer class="persistent-emergency-area">
     <button type="button" id="btn-global-stop" class="emergency-stop-button">
+      <!-- Lucide: square (stop icon) -->
       <svg viewBox="0 0 24 24"><rect width="14" height="14" x="5" y="5" rx="2"/></svg>
       <span id="btn-stop-text">EMERGENCY STOP</span>
     </button>

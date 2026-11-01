@@ -16,7 +16,7 @@ const CONFIG = {
   // Set MOCK_MODE to true if you are testing the app on your phone/laptop
   // WITHOUT connecting to the real robot hardware.
   // When true: a persistent "DEMO MODE" banner will be visible.
-  MOCK_MODE: false,
+  MOCK_MODE: true,
 
   // IP address of the robot on your local WiFi network / hotspot:
   ROBOT_IP: "192.168.1.100",
@@ -45,8 +45,20 @@ const CONFIG = {
 
   TELEOP: {
     PUBLISH_RATE_HZ: 10,          // Publish velocity commands at 10 Hz (every 100ms)
-    LINEAR_SPEED: 0.3,            // Forward/backward speed limit (m/s)
-    ANGULAR_SPEED: 0.5            // Turning speed limit (rad/s)
+    // Slow speed (default) - safe for indoor/narrow orchard rows
+    SLOW_LINEAR: 0.2,             // Forward/backward speed - Slow mode (m/s)
+    SLOW_ANGULAR: 0.4,            // Turning speed - Slow mode (rad/s)
+    // Medium speed - for open orchard areas
+    MEDIUM_LINEAR: 0.4,           // Forward/backward speed - Medium mode (m/s)
+    MEDIUM_ANGULAR: 0.7           // Turning speed - Medium mode (rad/s)
+  },
+
+  PICKING: {
+    TIMEOUT_SEC: 60,              // If robot doesn't finish picking in 60s, show "Timed out"
+    // Set DISTANCE_TOPIC to a string if your robot publishes fruit distance.
+    // Example: "TODO_ASK_VIKAS/picking/distance"
+    // Set to null to hide the distance display entirely.
+    DISTANCE_TOPIC: null
   },
 
   // ----------------------------------------------------------------------------
@@ -107,5 +119,5 @@ const CONFIG = {
 Object.freeze(CONFIG);
 Object.freeze(CONFIG.SPRAY);
 Object.freeze(CONFIG.TELEOP);
+Object.freeze(CONFIG.PICKING);
 Object.freeze(CONFIG.TOPICS);
-

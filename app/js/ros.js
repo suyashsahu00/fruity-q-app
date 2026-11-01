@@ -18,6 +18,7 @@ const ROSManager = {
   lastHeartbeatTime: 0,
   missedHeartbeats: 0,
   isEStopped: false,
+  _runtimeURL: null,  // Set by settings screen override (runtime IP/port)
 
   // Topics cache
   topics: {},
@@ -27,16 +28,23 @@ const ROSManager = {
   currentTwist: { linear: { x: 0, y: 0, z: 0 }, angular: { x: 0, y: 0, z: 0 } },
 
   // Event callbacks for UI
-  onConnectionChange: null, // fn(isOnline)
-  onEStopChange: null,      // fn(isEStopped)
-  onPickStateChange: null,  // fn(stateString)
-  onSprayStatusChange: null,// fn(statusString)
+  onConnectionChange: null,    // fn(isOnline)
+  onEStopChange: null,         // fn(isEStopped)
+  onPickStateChange: null,     // fn(stateString)
+  onSprayStatusChange: null,   // fn(statusString)
+  onPickDistanceChange: null,  // fn(distanceValue) - only if PICKING.DISTANCE_TOPIC configured
 
   init() {
     if (CONFIG.MOCK_MODE) {
       console.warn("[ROSManager] MOCK MODE ACTIVE. Connecting to simulated robot.");
       MockRobot.start();
       return;
+    }
+
+    // Apply IP/port overrides from settings screen (set by ui.js via window globals)
+    if (window.__fruityq_override_ip) {
+      // CONFIG is frozen; store the URL in a local runtime field
+      this._runtimeURL = `ws://${window.__fruityq_override_ip}:${window.__fruityq_override_port || CONFIG.ROBOT_PORT}`;
     }
 
     this.connect();
@@ -50,11 +58,11 @@ const ROSManager = {
       } catch (e) {}
     }
 
-    console.log(`[ROSManager] Connecting to rosbridge at ${CONFIG.ROSBRIDGE_URL}...`);
+    console.log(`[ROSManager] Connecting to rosbridge at ${this._runtimeURL || CONFIG.ROSBRIDGE_URL}...`);
 
     try {
       this.ros = new ROSLIB.Ros({
-        url: CONFIG.ROSBRIDGE_URL
+        url: this._runtimeURL || CONFIG.ROSBRIDGE_URL
       });
     } catch (err) {
       console.error("[ROSManager] Failed to construct ROSLIB instance:", err);
@@ -96,7 +104,7 @@ const ROSManager = {
     // Schedule auto-reconnect if not already running
     if (!this.reconnectInterval && !CONFIG.MOCK_MODE) {
       this.reconnectInterval = setInterval(() => {
-        console.log(`[ROSManager] Attempting reconnection to ${CONFIG.ROSBRIDGE_URL}...`);
+        console.log(`[ROSManager] Attempting reconnection to ${this._runtimeURL || CONFIG.ROSBRIDGE_URL}...`);
         this.connect();
       }, CONFIG.RECONNECT_INTERVAL_MS);
     }
@@ -179,6 +187,24 @@ const ROSManager = {
       });
     } catch (e) {
       console.error("[ROSManager] Could not subscribe to spray status:", e);
+    }
+
+    // 4. Fruit Picking Distance subscriber (only if PICKING.DISTANCE_TOPIC is configured)
+    if (CONFIG.PICKING.DISTANCE_TOPIC) {
+      try {
+        const distSub = new ROSLIB.Topic({
+          ros: this.ros,
+          name: CONFIG.PICKING.DISTANCE_TOPIC,
+          messageType: "std_msgs/Float32"
+        });
+        distSub.subscribe((message) => {
+          if (this.onPickDistanceChange) {
+            this.onPickDistanceChange(message.data.toFixed(2) + " m");
+          }
+        });
+      } catch (e) {
+        console.error("[ROSManager] Could not subscribe to pick distance:", e);
+      }
     }
   },
 
@@ -279,12 +305,18 @@ const ROSManager = {
   },
 
   // Teleop (Hold-to-move arrow buttons at 10 Hz)
-  startTeleop(linearX, angularZ) {
+  // linearX / angularZ are direction multipliers (-1, 0, +1).
+  // linearSpeed / angularSpeed are the actual speeds selected by the user (from config).
+  startTeleop(linearX, angularZ, linearSpeed, angularSpeed) {
     if (this.isEStopped || (!this.isConnected && !CONFIG.MOCK_MODE)) return;
 
+    // Default to slow speed if not provided
+    const lSpd = (linearSpeed  !== undefined) ? linearSpeed  : CONFIG.TELEOP.SLOW_LINEAR;
+    const aSpd = (angularSpeed !== undefined) ? angularSpeed : CONFIG.TELEOP.SLOW_ANGULAR;
+
     this.currentTwist = {
-      linear: { x: linearX * CONFIG.TELEOP.LINEAR_SPEED, y: 0, z: 0 },
-      angular: { x: 0, y: 0, z: angularZ * CONFIG.TELEOP.ANGULAR_SPEED }
+      linear:  { x: linearX  * lSpd, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: angularZ * aSpd }
     };
 
     // Immediately publish once

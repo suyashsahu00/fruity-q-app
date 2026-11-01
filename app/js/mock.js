@@ -98,6 +98,15 @@ const MockRobot = {
         if (typeof ROSManager !== "undefined" && ROSManager.onPickStateChange) {
           ROSManager.onPickStateChange(step);
         }
+
+        // If DISTANCE_TOPIC is configured, simulate a distance during "Aligned" step
+        if (step === "Aligned" && CONFIG.PICKING.DISTANCE_TOPIC) {
+          if (typeof ROSManager !== "undefined" && ROSManager.onPickDistanceChange) {
+            const mockDist = (Math.random() * 0.4 + 0.2).toFixed(2) + " m";
+            ROSManager.onPickDistanceChange(mockDist);
+          }
+        }
+
         currentIndex++;
         this.pickingStepTimer = setTimeout(advanceStep, 2000); // 2s per step
       } else {
