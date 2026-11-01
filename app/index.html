@@ -521,67 +521,68 @@
         </div>
       </div>
 
-      <!-- Industrial Robotic Control Area (Dual-Column Gantry Rig matching sketch) -->
+      <!-- Industrial Robotic Control Area (Single-Mast Robotic Arm matching user sketch) -->
       <section class="screen-card-panel gantry-panel">
         <div class="panel-header-row">
-          <span class="operations-title">DUAL-COLUMN GANTRY RIG</span>
+          <span class="operations-title">ROBOTIC ARM (MAST &amp; CROSS-ARM)</span>
           <span class="telemetry-pill" id="gantry-coords-readout">X: 0.0 mm | Y: 0.0 mm</span>
         </div>
 
-        <!-- Dual-Column Gantry Visual Stage (Directly matching sketch) -->
-        <div class="gantry-rig-stage">
+        <!-- Single-Mast Visual Work Envelope (Draggable with Cursor / Touch) -->
+        <div class="gantry-rig-stage" id="gantry-interactive-stage" title="Click or drag with cursor to move robotic arm">
           <!-- Background Work Envelope Grid -->
           <div class="gantry-grid-overlay"></div>
 
-          <!-- Vertical Y-Axis Dimension Ruler & Arrow (Matching Sketch: y &uarr; &darr;) -->
+          <!-- Drag Hint Badge -->
+          <div class="gantry-drag-hint">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/><path d="m19 9 3 3-3 3"/><path d="m9 19 3 3 3-3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>
+            <span>DRAG WITH CURSOR OR TOUCH</span>
+          </div>
+
+          <!-- Vertical Y-Axis Dimension Ruler & Arrow (Matching Sketch Left Arrow: y &uarr; &darr;) -->
           <div class="gantry-dim-y">
-            <span class="dim-label">Y+</span>
+            <span class="dim-label">Y+ (+100)</span>
             <div class="dim-line-y">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m18 15-6-6-6 6"/></svg>
-              <span class="dim-text" id="gantry-dim-y-val">y</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m18 15-6-6-6 6"/></svg>
+              <span class="dim-text" id="gantry-dim-y-val">y: 0 mm</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
             </div>
-            <span class="dim-label">Y-</span>
+            <span class="dim-label">Y- (-100)</span>
           </div>
 
-          <!-- Left Pillar Track (Y-Rail Left) -->
-          <div class="gantry-pillar pillar-left">
-            <div class="pillar-cap top"></div>
-            <div class="pillar-track-slot"></div>
-            <div class="pillar-ticks"></div>
-            <div class="pillar-cap bottom"></div>
-            <span class="pillar-tag">RAIL L</span>
-          </div>
-
-          <!-- Right Pillar Track (Y-Rail Right) -->
-          <div class="gantry-pillar pillar-right">
-            <div class="pillar-cap top"></div>
-            <div class="pillar-track-slot"></div>
-            <div class="pillar-ticks"></div>
-            <div class="pillar-cap bottom"></div>
-            <span class="pillar-tag">RAIL R</span>
-          </div>
-
-          <!-- Horizontal Crossbeam Assembly (Moves Up and Down Y-axis across both pillars) -->
-          <div class="gantry-crossbeam-assembly" id="gantry-crossbeam">
-            <!-- Left slider sleeve riding on left pillar -->
-            <div class="beam-sleeve sleeve-left"></div>
-
-            <!-- Main horizontal bridge beam -->
-            <div class="beam-bar">
-              <div class="beam-guide-rail"></div>
-              <!-- Horizontal X-Axis Dimension & Arrow (Matching Sketch: &larr; x &rarr;) -->
-              <div class="beam-dim-x">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
-                <span class="dim-text" id="gantry-dim-x-val">&larr; x &rarr;</span>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 18 6-6-6-6"/></svg>
+          <!-- Central Vertical Mast (Dual linear rails with tick marks matching sketch) -->
+          <div class="single-mast-column" id="single-mast">
+            <div class="mast-cap top"></div>
+            <!-- Dual rails: left orange rail & right notched rail from sketch -->
+            <div class="mast-twin-rails">
+              <div class="mast-rail rail-orange"></div>
+              <div class="mast-center-channel"></div>
+              <div class="mast-rail rail-notched">
+                <div class="mast-notch-marks"></div>
               </div>
             </div>
+            <div class="mast-cap bottom"></div>
+            <span class="mast-label">VERTICAL MAST</span>
+          </div>
 
-            <!-- Right slider sleeve riding on right pillar -->
-            <div class="beam-sleeve sleeve-right"></div>
+          <!-- Horizontal Cross-Arm Assembly (Crosses through the mast, slides Up/Down Y & Left/Right X) -->
+          <div class="cross-arm-assembly" id="gantry-crossbeam">
+            <!-- Main Horizontal Arm Boom -->
+            <div class="cross-arm-boom">
+              <div class="arm-rail-groove"></div>
+              <div class="arm-dim-indicator" id="gantry-dim-x-val">&larr; x: 0 mm &rarr;</div>
+            </div>
 
-            <!-- Robotic Hand / Gripper Toolhead (Moves Left and Right X-axis along the beam) -->
+            <!-- Central Mast Slider Collar (Clamps over the vertical mast) -->
+            <div class="mast-slider-collar">
+              <span class="collar-bolt top-left"></span>
+              <span class="collar-bolt top-right"></span>
+              <span class="collar-center-joint"></span>
+              <span class="collar-bolt btm-left"></span>
+              <span class="collar-bolt btm-right"></span>
+            </div>
+
+            <!-- Robotic Hand / Gripper Toolhead (Draggable / Slidable) -->
             <div class="gantry-toolhead" id="gantry-toolhead">
               <div class="toolhead-carriage">
                 <span class="toolhead-led"></span>
@@ -599,10 +600,14 @@
             </div>
           </div>
 
-          <!-- Bottom X-Limits Dimension Bar -->
+          <!-- Bottom X-Axis Dimension Ruler & Arrow (Matching Sketch Bottom Arrow: &harr; x) -->
           <div class="gantry-dim-x-bottom">
             <span class="dim-bound">X- (-150)</span>
-            <span class="dim-center">0 (CENTER)</span>
+            <div class="dim-line-x">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+              <span class="dim-text-x">&harr; X-AXIS TRAVEL &harr;</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
             <span class="dim-bound">X+ (+150)</span>
           </div>
         </div>

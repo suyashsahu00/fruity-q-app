@@ -298,7 +298,7 @@ const UI = {
       });
     }
 
-    // --- Screen 5: Manual Movement (Dual-Column Robotic Gantry Rig - Sketch Spec) ---
+    // --- Screen 5: Manual Movement (Single-Mast Robotic Arm & Direct Cursor Dragging) ---
     const stepChips = document.querySelectorAll(".gantry-panel .btn-speed");
     stepChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -320,27 +320,119 @@ const UI = {
       if (readout) readout.innerText = coordStr;
       if (posSub) posSub.innerText = `(${signX}${this.gantryX.toFixed(0)}, ${signY}${this.gantryY.toFixed(0)})`;
       if (dimX) dimX.innerText = `← x: ${signX}${this.gantryX.toFixed(0)} mm →`;
-      if (dimY) dimY.innerText = `y: ${signY}${this.gantryY.toFixed(0)}`;
+      if (dimY) dimY.innerText = `y: ${signY}${this.gantryY.toFixed(0)} mm`;
 
-      // Dual-pillar physical movement:
-      // Y-axis translates the horizontal crossbeam up and down across both vertical pillars
+      // Single-Mast Motion Physics:
+      // 1. Y-axis translates the horizontal cross-arm up and down along the central vertical mast
       const crossbeamEl = document.getElementById("gantry-crossbeam");
       if (crossbeamEl) {
-        // Clamp Y visual translation (-80px up to +80px down)
-        const transY = Math.max(-80, Math.min(80, -this.gantryY * 0.7));
+        // Clamp Y visual translation (-85px up to +85px down for -100 to +100mm)
+        const transY = Math.max(-85, Math.min(85, -this.gantryY * 0.82));
         crossbeamEl.style.transform = `translateY(${transY}px)`;
       }
 
-      // X-axis translates the robotic toolhead left and right along the horizontal crossbeam
+      // 2. X-axis translates the robotic toolhead left and right along the horizontal cross-arm boom
       const toolheadEl = document.getElementById("gantry-toolhead");
       if (toolheadEl) {
-        // Clamp X visual translation (-90px left to +90px right)
-        const transX = Math.max(-90, Math.min(90, this.gantryX * 0.6));
+        // Clamp X visual translation (-100px left to +100px right for -150 to +150mm)
+        const transX = Math.max(-100, Math.min(100, this.gantryX * 0.65));
         toolheadEl.style.transform = `translateX(calc(-50% + ${transX}px))`;
       }
     };
 
-    // Both single tap step AND hold-to-jog support
+    // =========================================================================
+    // DIRECT CURSOR & TOUCH DRAGGING / GRABBING FOR ROBOTIC ARM
+    // =========================================================================
+    const stage = document.getElementById("gantry-interactive-stage");
+    const crossbeam = document.getElementById("gantry-crossbeam");
+    const toolhead = document.getElementById("gantry-toolhead");
+
+    if (stage) {
+      let isDragging = false;
+      let startPointerX = 0;
+      let startPointerY = 0;
+      let startGantryX = 0;
+      let startGantryY = 0;
+
+      const onPointerDown = (e) => {
+        // Only primary mouse button or touch
+        if (e.button !== undefined && e.button !== 0) return;
+
+        isDragging = true;
+        startPointerX = e.clientX;
+        startPointerY = e.clientY;
+        startGantryX = this.gantryX;
+        startGantryY = this.gantryY;
+
+        try {
+          stage.setPointerCapture(e.pointerId);
+        } catch (_) {}
+
+        stage.classList.add("is-dragging");
+        if (crossbeam) crossbeam.classList.add("is-dragging");
+        if (toolhead) toolhead.classList.add("is-dragging");
+
+        // If clicking on the stage directly (outside the arm collar), jump or start dragging from there
+        const rect = stage.getBoundingClientRect();
+        const clickRelX = (e.clientX - rect.left) / rect.width;
+        const clickRelY = (e.clientY - rect.top) / rect.height;
+
+        // Stage active travel area
+        const targetX = Math.round(((clickRelX * 300) - 150) / 5) * 5;
+        const targetY = Math.round((((1 - clickRelY) * 200) - 100) / 5) * 5;
+
+        // If user tapped directly on stage background away from center, snap towards it
+        const distFromCurrent = Math.hypot(targetX - this.gantryX, targetY - this.gantryY);
+        if (distFromCurrent > 30 && e.target === stage) {
+          this.gantryX = Math.max(-150, Math.min(150, targetX));
+          this.gantryY = Math.max(-100, Math.min(100, targetY));
+          startGantryX = this.gantryX;
+          startGantryY = this.gantryY;
+          updateGantryDisplay();
+        }
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+
+        const deltaPxX = e.clientX - startPointerX;
+        const deltaPxY = e.clientY - startPointerY;
+
+        const rect = stage.getBoundingClientRect();
+        // Scale factors: 300mm span across width, 200mm span across height
+        const pxPerMmX = (rect.width * 0.72) / 300;
+        const pxPerMmY = (rect.height * 0.72) / 200;
+
+        const deltaMmX = deltaPxX / (pxPerMmX || 1);
+        const deltaMmY = -deltaPxY / (pxPerMmY || 1); // Dragging cursor up is positive Y+
+
+        const newX = startGantryX + deltaMmX;
+        const newY = startGantryY + deltaMmY;
+
+        this.gantryX = Math.max(-150, Math.min(150, Math.round(newX * 10) / 10));
+        this.gantryY = Math.max(-100, Math.min(100, Math.round(newY * 10) / 10));
+
+        updateGantryDisplay();
+      };
+
+      const onPointerUp = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try {
+          stage.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+        stage.classList.remove("is-dragging");
+        if (crossbeam) crossbeam.classList.remove("is-dragging");
+        if (toolhead) toolhead.classList.remove("is-dragging");
+      };
+
+      stage.addEventListener("pointerdown", onPointerDown);
+      stage.addEventListener("pointermove", onPointerMove);
+      stage.addEventListener("pointerup", onPointerUp);
+      stage.addEventListener("pointercancel", onPointerUp);
+    }
+
+    // Directional machine jog buttons (hold-to-jog & single-step)
     document.querySelectorAll(".btn-gantry-move").forEach((btn) => {
       const axis = btn.getAttribute("data-axis");
       const dir = parseFloat(btn.getAttribute("data-dir") || "1");

@@ -1092,16 +1092,24 @@ svg {
   color: #2E7D32;
 }
 
-/* Outer Rig Stage (Enclosed machine envelope) */
+/* Outer Rig Stage (Enclosed machine envelope with cursor grabbing) */
 .gantry-rig-stage {
   position: relative;
   width: 100%;
-  height: 270px;
-  background: radial-gradient(circle at 50% 50%, #1A3123 0%, #101E15 100%);
+  height: 275px;
+  background: radial-gradient(circle at 50% 50%, #1A3123 0%, #0E1A12 100%);
   border: 1.5px solid #2B4734;
   border-radius: var(--radius-inner);
   overflow: hidden;
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.gantry-rig-stage:active,
+.gantry-rig-stage.is-dragging {
+  cursor: grabbing !important;
 }
 
 /* Grid overlay for precision scale */
@@ -1115,13 +1123,33 @@ svg {
   pointer-events: none;
 }
 
-/* Y-Axis Dimension Line on Left (Matching Sketch: y ↑ ↓) */
+/* Drag Hint Badge */
+.gantry-drag-hint {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(16, 30, 21, 0.9);
+  border: 1px solid rgba(165, 214, 167, 0.35);
+  border-radius: var(--radius-badge);
+  padding: 3px 7px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #A5D6A7;
+  pointer-events: none;
+  z-index: 15;
+  letter-spacing: 0.3px;
+}
+
+/* Vertical Y-Axis Dimension Ruler & Arrow on Left (Matching Sketch: y &uarr; &darr;) */
 .gantry-dim-y {
   position: absolute;
-  left: 8px;
+  left: 10px;
   top: 14px;
-  bottom: 26px;
-  width: 24px;
+  bottom: 28px;
+  width: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1130,14 +1158,14 @@ svg {
   pointer-events: none;
 }
 .gantry-dim-y .dim-label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   color: #A5D6A7;
   letter-spacing: 0.5px;
 }
 .dim-line-y {
   flex: 1;
-  width: 1px;
+  width: 2px;
   background: repeating-linear-gradient(
     to bottom,
     rgba(165, 214, 167, 0.7),
@@ -1153,150 +1181,149 @@ svg {
   justify-content: space-between;
 }
 .dim-line-y .dim-text {
-  background: #101E15;
-  padding: 2px 4px;
-  font-size: 11px;
+  background: #0E1A12;
+  padding: 2px 5px;
+  font-size: 10px;
   font-weight: 900;
   color: #C8E6C9;
   border-radius: 3px;
-  border: 1px solid rgba(165, 214, 167, 0.4);
+  border: 1px solid rgba(165, 214, 167, 0.5);
   font-style: italic;
+  white-space: nowrap;
 }
 
-/* Dual Vertical Pillar Rails (Left & Right Steel Uprights) */
-.gantry-pillar {
+/* Central Vertical Mast (Twin Linear Rails with Tick Marks matching user sketch) */
+.single-mast-column {
   position: absolute;
-  top: 12px;
-  bottom: 26px;
-  width: 28px;
-  background: linear-gradient(90deg, #2A4532 0%, #3B5F45 40%, #1F3325 100%);
-  border: 1.5px solid #4B7858;
+  top: 14px;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46px;
+  background: linear-gradient(180deg, #1C3325 0%, #112217 100%);
+  border: 1.5px solid #3E6349;
   border-radius: 4px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6), inset 0 0 6px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   z-index: 3;
 }
-.gantry-pillar.pillar-left {
-  left: 40px;
-}
-.gantry-pillar.pillar-right {
-  right: 40px;
-}
-.pillar-cap {
+.mast-cap {
   width: 100%;
   height: 8px;
-  background: #5A8E6A;
+  background: #507D5E;
   border-radius: 2px;
 }
-.pillar-cap.top { border-bottom: 1px solid #1A2E20; }
-.pillar-cap.bottom { border-top: 1px solid #1A2E20; }
-.pillar-track-slot {
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 11px;
-  width: 6px;
-  background: #0B160F;
-  border-left: 1px solid #18281D;
-  border-right: 1px solid #4B7858;
-  border-radius: 2px;
+.mast-cap.top { border-bottom: 1px solid #14241B; }
+.mast-cap.bottom { border-top: 1px solid #14241B; }
+
+.mast-twin-rails {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 4px 5px;
+  position: relative;
 }
-.pillar-ticks {
+
+/* Left Rail: Orange track from sketch */
+.mast-rail.rail-orange {
+  width: 8px;
+  background: linear-gradient(180deg, #FF9800 0%, #E65100 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(255, 152, 0, 0.4);
+}
+
+.mast-center-channel {
+  flex: 1;
+  margin: 0 4px;
+  background: #09130D;
+  border-radius: 2px;
+  border-left: 1px solid #14241A;
+  border-right: 1px solid #233D2B;
+}
+
+/* Right Rail: Red track with tick marks from sketch (+ + + +) */
+.mast-rail.rail-notched {
+  width: 10px;
+  background: linear-gradient(180deg, #E53935 0%, #C62828 100%);
+  border-radius: 2px;
+  position: relative;
+  box-shadow: 0 0 6px rgba(229, 57, 53, 0.4);
+}
+.mast-notch-marks {
   position: absolute;
-  top: 16px;
-  bottom: 16px;
-  right: 2px;
-  width: 4px;
+  inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255,255,255,0.3),
-    rgba(255,255,255,0.3) 1px,
-    transparent 1px,
+    #FFFFFF 0px,
+    #FFFFFF 2px,
+    transparent 2px,
     transparent 12px
   );
+  opacity: 0.9;
 }
-.pillar-tag {
+.mast-label {
   position: absolute;
-  bottom: -18px;
-  font-size: 9px;
+  bottom: -16px;
+  font-size: 8px;
   font-weight: 800;
   color: #7CA888;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-/* Horizontal Crossbeam Assembly (Moves Up and Down Y-axis across both pillars) */
-.gantry-crossbeam-assembly {
+/* Horizontal Cross-Arm Assembly (Slides Up/Down Y & Left/Right X) */
+.cross-arm-assembly {
   position: absolute;
-  left: 28px;
-  right: 28px;
-  top: 110px;
-  height: 44px;
+  left: 20px;
+  right: 20px;
+  top: 115px; /* Center default */
+  height: 48px;
   z-index: 6;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  transition: transform 0.1s ease-out;
-}
-
-/* Sleeves sliding along vertical pillars */
-.beam-sleeve {
-  width: 32px;
-  height: 40px;
-  background: linear-gradient(180deg, #375940 0%, #203527 100%);
-  border: 1.5px solid #81C784;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.6);
-  flex-shrink: 0;
-  position: relative;
-  z-index: 7;
-}
-.beam-sleeve::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: #A5D6A7;
-  border-radius: 50%;
-}
-
-/* Horizontal bridge beam between the two pillars */
-.beam-bar {
-  flex: 1;
-  height: 22px;
-  background: linear-gradient(180deg, #446C4E 0%, #294432 100%);
-  border-top: 1.5px solid #A5D6A7;
-  border-bottom: 1.5px solid #1B2F22;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-  margin: 0 -4px;
-  z-index: 6;
+  touch-action: none;
+  cursor: grab;
+  transition: transform 0.08s ease-out;
 }
-.beam-guide-rail {
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  height: 4px;
-  background: #0E1A12;
-  border-top: 1px solid #1E3325;
-  border-bottom: 1px solid #66BB6A;
-  border-radius: 2px;
+.cross-arm-assembly:active,
+.cross-arm-assembly.is-dragging {
+  cursor: grabbing !important;
 }
-.beam-dim-x {
+
+/* Main Horizontal Arm Boom */
+.cross-arm-boom {
   position: absolute;
-  top: -16px;
+  left: 12px;
+  right: 12px;
+  height: 20px;
+  background: linear-gradient(180deg, #3E6649 0%, #25402D 100%);
+  border-top: 1.5px solid #A5D6A7;
+  border-bottom: 1.5px solid #122116;
+  border-radius: 4px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(16, 30, 21, 0.9);
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+  z-index: 5;
+}
+.arm-rail-groove {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 4px;
+  background: #0B160F;
+  border-radius: 2px;
+}
+.arm-dim-indicator {
+  position: absolute;
+  top: -16px;
+  background: rgba(16, 30, 21, 0.95);
   padding: 1px 6px;
   border-radius: 3px;
   border: 1px solid rgba(165, 214, 167, 0.4);
@@ -1304,9 +1331,47 @@ svg {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.5px;
+  pointer-events: none;
 }
 
-/* Robotic Hand / Gripper Toolhead (Slides horizontally on the crossbeam) */
+/* Central Mast Slider Collar (Clamps over the vertical mast) */
+.mast-slider-collar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 44px;
+  background: linear-gradient(180deg, #2D4D36 0%, #1A3122 100%);
+  border: 2px solid #81C784;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.collar-center-joint {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #A5D6A7 0%, #388E3C 100%);
+  border: 1px solid #FFFFFF;
+}
+.collar-bolt {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #C8E6C9;
+  border-radius: 50%;
+}
+.collar-bolt.top-left { top: 3px; left: 3px; }
+.collar-bolt.top-right { top: 3px; right: 3px; }
+.collar-bolt.btm-left { bottom: 3px; left: 3px; }
+.collar-bolt.btm-right { bottom: 3px; right: 3px; }
+
+/* Robotic Hand / Gripper Toolhead */
 .gantry-toolhead {
   position: absolute;
   left: 50%;
@@ -1318,8 +1383,14 @@ svg {
   z-index: 10;
   pointer-events: auto;
   cursor: grab;
-  transition: transform 0.1s ease-out;
+  transition: transform 0.08s ease-out;
+  touch-action: none;
 }
+.gantry-toolhead:active,
+.gantry-toolhead.is-dragging {
+  cursor: grabbing !important;
+}
+
 .toolhead-carriage {
   background: #1B5E20;
   border: 1.5px solid #66BB6A;
@@ -1389,22 +1460,22 @@ svg {
 }
 .toolhead-coords {
   margin-top: 2px;
-  background: rgba(10, 20, 14, 0.9);
-  padding: 1px 4px;
+  background: rgba(10, 20, 14, 0.95);
+  padding: 1px 5px;
   border-radius: 3px;
   font-size: 9px;
   font-weight: 700;
   color: #A5D6A7;
-  border: 0.5px solid rgba(165, 214, 167, 0.3);
+  border: 0.5px solid rgba(165, 214, 167, 0.35);
   font-variant-numeric: tabular-nums;
 }
 
-/* Bottom X-Limits Dimension Bar */
+/* Bottom X-Axis Dimension Ruler & Arrow (Matching Sketch: &harr; x) */
 .gantry-dim-x-bottom {
   position: absolute;
   bottom: 6px;
-  left: 40px;
-  right: 40px;
+  left: 20px;
+  right: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1413,6 +1484,17 @@ svg {
   color: #7CA888;
   letter-spacing: 0.5px;
   pointer-events: none;
+}
+.dim-line-x {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #A5D6A7;
+}
+.dim-text-x {
+  font-size: 9px;
+  font-weight: 800;
+  color: #C8E6C9;
 }
 
 /* 4 Machine Movement Direction Buttons */
