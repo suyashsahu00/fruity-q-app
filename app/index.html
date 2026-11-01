@@ -24,14 +24,25 @@
     <span>DEMO MODE ACTIVE (Simulated Robot)</span>
   </div>
 
-  <!-- SPLASH SCREEN -->
-  <div id="splash-screen">
-    <div class="splash-icon-wrapper">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
+  <!-- SPLASH SCREEN (1.8s CSS-only animation) -->
+  <div id="splash-screen" aria-hidden="true">
+    <div class="splash-content">
+      <div class="splash-logo-wrapper">
+        <svg class="splash-logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Fruit body -->
+          <path class="splash-fruit-body" d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/>
+          <!-- Stem and leaf that swings -->
+          <g class="splash-leaf-group">
+            <path class="splash-fruit-stem" d="M12 7c-.5-1.8-1.2-3.2-2.2-4.2"/>
+            <path class="splash-fruit-leaf" d="M11.5 4.2c2.2-2.2 5.5-1.6 6.5.8-1.6 1.8-4.5 1.4-6.5-.8z" fill="currentColor"/>
+          </g>
+        </svg>
+      </div>
+      <h1 class="splash-title">Fruity Q</h1>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-bar-fill"></div>
+      </div>
     </div>
-    <h1 class="splash-title">Fruity Q</h1>
-    <p class="splash-sub">Smart Orchard Rover</p>
-    <div class="splash-loader"></div>
   </div>
 
   <!-- MAIN VIEWPORT CONTAINER -->
@@ -526,9 +537,9 @@
     <button type="button" id="btn-global-stop" class="emergency-stop-button">
       <!-- Lucide: square (stop icon) -->
       <svg viewBox="0 0 24 24"><rect width="14" height="14" x="5" y="5" rx="2"/></svg>
-      <span id="btn-stop-text">EMERGENCY STOP</span>
+      <span id="btn-stop-text">SOFT STOP</span>
     </button>
-    <div class="emergency-affordance-helper">Dedicated safety control · Always visible</div>
+    <div class="emergency-affordance-helper" id="stop-subline">Robot not connected: use the red button</div>
   </footer>
 
   <!-- ======================================================================

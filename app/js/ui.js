@@ -37,14 +37,47 @@ const UI = {
   },
 
   // --------------------------------------------------------------------------
-  // 1. Splash Screen
+  // 1. Splash Screen (1.8s CSS-only, once per session, prefers-reduced-motion)
   // --------------------------------------------------------------------------
   setupSplashScreen() {
     const splash = document.getElementById("splash-screen");
     if (!splash) return;
-    window.addEventListener("load", () => {
-      setTimeout(() => { splash.classList.add("hidden"); }, 1200);
-    });
+
+    // Show splash only once per session (sessionStorage inside try/catch)
+    let alreadyShown = false;
+    try {
+      alreadyShown = !!sessionStorage.getItem("fruityq_splash_shown");
+    } catch (e) {
+      console.warn("[Splash] sessionStorage read error:", e);
+    }
+
+    if (alreadyShown) {
+      splash.classList.add("hidden");
+      splash.style.display = "none";
+      return;
+    }
+
+    // Mark as shown for the current session
+    try {
+      sessionStorage.setItem("fruityq_splash_shown", "true");
+    } catch (e) {
+      console.warn("[Splash] sessionStorage write error:", e);
+    }
+
+    // Respect prefers-reduced-motion (skip animation)
+    let prefersReduced = false;
+    try {
+      prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch (e) {}
+
+    const displayDuration = prefersReduced ? 50 : 1800; // 1.8 seconds
+
+    setTimeout(() => {
+      splash.classList.add("hidden");
+      setTimeout(() => {
+        splash.style.display = "none";
+      }, 400); // Wait for CSS opacity transition to complete
+    }, displayDuration);
   },
 
   // --------------------------------------------------------------------------
@@ -597,7 +630,7 @@ const UI = {
   },
 
   // --------------------------------------------------------------------------
-  // 9. Emergency STOP
+  // 9. Soft STOP
   // --------------------------------------------------------------------------
   setupEmergencyStop() {
     const btnStop     = document.getElementById("btn-global-stop");
@@ -608,14 +641,14 @@ const UI = {
       if (!ROSManager.isEStopped) {
         ROSManager.triggerEmergencyStop();
         btnStop.classList.add("active-stopped");
-        if (btnStopText) btnStopText.innerText = "RESUME E-STOP";
-        alert("EMERGENCY STOP ACTIVATED!\nAll motors, teleop movement and spray pumps halted immediately.");
+        if (btnStopText) btnStopText.innerText = "RESUME SOFT STOP";
+        alert("SOFT STOP ACTIVATED!\nAll motors, teleop movement and spray pumps halted immediately.");
       } else {
-        const confirmReset = confirm("Are you sure you want to release Emergency Stop?");
+        const confirmReset = confirm("Are you sure you want to release Soft Stop?");
         if (confirmReset) {
           ROSManager.resetEmergencyStop();
           btnStop.classList.remove("active-stopped");
-          if (btnStopText) btnStopText.innerText = "EMERGENCY STOP";
+          if (btnStopText) btnStopText.innerText = "SOFT STOP";
         }
       }
     });
@@ -743,6 +776,16 @@ const UI = {
       const followMe = document.getElementById("toggle-follow-me");
       const followIsOn = followMe && followMe.checked;
       this._setTeleopButtonsEnabled(!followIsOn);
+    }
+
+    // SOFT STOP subline text:
+    // Online: "Emergency: press the red button on the robot"
+    // Offline: "Robot not connected: use the red button"
+    const stopSubline = document.getElementById("stop-subline");
+    if (stopSubline) {
+      stopSubline.innerText = isOnline
+        ? "Emergency: press the red button on the robot"
+        : "Robot not connected: use the red button";
     }
   }
 };
