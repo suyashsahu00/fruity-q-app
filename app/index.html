@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Fruity Q - Fruit Picking & Sprinkler Robot</title>
+  
+  <!-- Mobile & PWA Meta -->
+  <meta name="theme-color" content="#d32f2f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Mobile-first web controller for Fruity Q agricultural robot">
+
+  <!-- Local Stylesheet (No CDN, fully offline) -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- DEMO MODE BANNER (Shown automatically when CONFIG.MOCK_MODE is true) -->
+  <div id="demo-banner">⚠️ DEMO MODE ACTIVE (Simulated Robot)</div>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen">
+    <div class="splash-logo">🍎</div>
+    <h1 class="splash-title">Fruity Q</h1>
+    <p class="splash-sub">Smart Orchard Assistant</p>
+    <div class="splash-loader"></div>
+  </div>
+
+  <!-- TOP APP HEADER -->
+  <header class="app-header">
+    <div class="app-brand">
+      <span class="brand-icon">🍊</span>
+      <span class="brand-name">Fruity Q</span>
+    </div>
+
+    <!-- Live Status Pill (Green ONLINE / Red OFFLINE) -->
+    <div id="robot-status-pill" class="status-pill">
+      <span class="status-dot"></span>
+      <span id="robot-status-text">OFFLINE</span>
+    </div>
+  </header>
+
+  <!-- SCREEN CONTAINER -->
+  <main class="screen-wrapper">
+
+    <!-- ====================================================================
+         1. HOME SCREEN
+         ==================================================================== -->
+    <section id="home-screen" class="screen active">
+      <!-- Hero Robot Media Card -->
+      <div class="hero-media-card">
+        <!-- Uses local robot.jpg placeholder; can be replaced with robot-demo.mp4 -->
+        <img src="assets/robot.jpg" alt="Fruity Q Robot" id="hero-robot-image" onerror="this.style.display='none'">
+        <div class="hero-overlay">
+          <div class="hero-caption">Autonomous Orchard Rover</div>
+        </div>
+      </div>
+
+      <!-- Action Cards -->
+      <div class="cards-grid">
+        <!-- 1. Fruit Picking Card -->
+        <div id="card-nav-picking" class="action-card disabled">
+          <div class="action-card-icon">🍎</div>
+          <div class="action-card-content">
+            <h2 class="action-card-title">Fruit Picking</h2>
+            <p class="action-card-desc">Safety checks, alignment & robotic harvesting</p>
+          </div>
+          <span class="action-card-badge">Module 1</span>
+        </div>
+
+        <!-- 2. Sprinkling Card -->
+        <div id="card-nav-sprinkling" class="action-card">
+          <div class="action-card-icon">💦</div>
+          <div class="action-card-content">
+            <h2 class="action-card-title">Sprinkling</h2>
+            <p class="action-card-desc">Timed precision tree spraying (1 - 5s)</p>
+          </div>
+          <span class="action-card-badge">Module 2</span>
+        </div>
+
+        <!-- 3. Logistics Card -->
+        <div id="card-nav-logistics" class="action-card disabled">
+          <div class="action-card-icon">🚜</div>
+          <div class="action-card-content">
+            <h2 class="action-card-title">Logistics</h2>
+            <p class="action-card-desc">Follow-me mode & manual directional teleop</p>
+          </div>
+          <span class="action-card-badge">Module 3</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         2. SPRINKLING SCREEN
+         ==================================================================== -->
+    <section id="sprinkling-screen" class="screen">
+      <!-- Screen Header with Back Button -->
+      <div class="screen-header">
+        <button type="button" class="btn-back" data-target="home-screen" aria-label="Go Back">←</button>
+        <h2 class="screen-title">Sprinkling Control</h2>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-section-title">Select Spray Duration</div>
+        
+        <!-- Duration Selector (1s to 5s buttons generated via JS) -->
+        <div id="duration-selector-container" class="duration-selector"></div>
+
+        <!-- Feedback callout showing status / "Sprayed for X s" -->
+        <div id="spray-feedback" class="status-callout">
+          <span>💧</span> Ready to spray
+        </div>
+
+        <!-- Main Spray Button -->
+        <button type="button" id="btn-trigger-spray" class="btn-primary-action">
+          <span>💦</span> SPRAY NOW
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       CONFIRMATION MODAL FOR DANGEROUS ACTIONS (Spraying)
+       ====================================================================== -->
+  <div id="spray-confirm-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-icon">⚠️</div>
+      <h3 class="modal-title">Confirm Spray</h3>
+      <p class="modal-body">
+        Ensure humans and animals are clear of the nozzle path.<br><br>
+        Activate spray for <strong id="confirm-spray-duration-text">2 seconds</strong>?
+      </p>
+      <div class="modal-actions">
+        <button type="button" id="btn-spray-confirm-no" class="btn-modal-cancel">Cancel</button>
+        <button type="button" id="btn-spray-confirm-yes" class="btn-modal-confirm">Confirm & Spray</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       FIXED EMERGENCY STOP BUTTON (Visible on every screen)
+       ====================================================================== -->
+  <footer class="fixed-stop-container">
+    <button type="button" id="btn-global-stop" class="btn-emergency-stop">
+      <span>🛑</span> EMERGENCY STOP
+    </button>
+  </footer>
+
+  <!-- ======================================================================
+       OFFLINE JAVASCRIPT LIBRARIES & SCRIPTS (Execution Order Matters)
+       ====================================================================== -->
+  <!-- 1. Offline ROS bridge client library -->
+  <script src="lib/roslib.min.js"></script>
+
+  <!-- 2. Application Configuration (IP, ports, topics, limits) -->
+  <script src="js/config.js"></script>
+
+  <!-- 3. Mock Robot Simulator for testing without hardware -->
+  <script src="js/mock.js"></script>
+
+  <!-- 4. ROS connection, heartbeat, publish helpers -->
+  <script src="js/ros.js"></script>
+
+  <!-- 5. UI navigation, buttons & interaction logic -->
+  <script src="js/ui.js"></script>
+
+</body>
+</html>
